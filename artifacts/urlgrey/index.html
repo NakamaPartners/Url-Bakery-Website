@@ -83,6 +83,9 @@
   .card .price { font-size: 15px; color: #5A5248; }
   .card .note { font-family: 'Homemade Apple', cursive; font-size: 18px; color: #4F66FF; margin-top: 10px; transform: rotate(-1.5deg); transition: transform 0.3s ease; display: inline-block; }
   .card:hover .note { transform: rotate(2deg) translateX(6px); }
+  .art-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .art video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .founder-photo { width: min(340px, 78vw); height: 300px; object-fit: cover; border: 3px solid #2B241F; border-radius: 22px; box-shadow: 8px 8px 0 #2B241F; margin: 0 auto 30px; display: block; transform: rotate(-1.5deg); background: #E8B4BC; }
 
   .founder { padding: 120px 6vw; text-align: center; position: relative; }
   .founder p { font-size: 18px; color: #5A5248; margin-bottom: 12px; }
@@ -124,9 +127,9 @@
   <nav>
     <div class="logo">urlgrey</div>
     <div class="navlinks">
-      <span class="clickable">the goods</span>
-      <span class="clickable">the drops</span>
-      <div class="btn clickable magnetic" data-label="tap">order now</div>
+      <span class="clickable" data-scroll="hWrap">the goods</span>
+      <span class="clickable" data-scroll="contact">the drops</span>
+      <div class="btn clickable magnetic" data-label="tap" data-href="https://www.instagram.com/urlgreybakery/">order now</div>
     </div>
   </nav>
 
@@ -234,76 +237,50 @@
   <div class="h-wrap" id="hWrap" data-bg="#F2C879">
     <div class="h-sticky">
       <div class="h-title">
-        <span class="hand">the usual suspects</span>
+        <span class="hand">the urth day drop</span>
         <span class="big">this week's lineup</span>
       </div>
       <div class="h-track" id="hTrack">
 
         <div class="card clickable" data-rot="-2" data-label="yum">
-          <div class="art" style="background:#4F66FF;">
-            <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
-              <path d="M20 75 Q20 45 55 45 Q90 45 90 75 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
-              <path d="M20 75 L90 75 L85 92 L25 92 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
-              <path d="M35 45 Q38 30 45 28 M55 44 Q55 26 62 24 M75 45 Q78 32 72 26" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <h4>signature bundt</h4>
-          <div class="price">from $28</div>
-          <div class="note">the one that started it</div>
+          <div class="art" style="background:#2B241F;"><img id="img-artemis" class="art-img" alt="Artemis II — hojicha and dark cocoa cookie topped with a white chocolate star"></div>
+          <h4>artemis II</h4>
+          <div class="price">hojicha + dark cocoa, salt stars</div>
+          <div class="note">houston, we have cookies</div>
         </div>
 
         <div class="card clickable" data-rot="1.5" style="margin-top:28px;" data-label="yum">
-          <div class="art" style="background:#C98B5C;">
-            <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
-              <circle cx="42" cy="48" r="24" fill="none" stroke="#FBF3E7" stroke-width="4"/>
-              <circle cx="35" cy="42" r="2.5" fill="#FBF3E7"/>
-              <circle cx="48" cy="40" r="2.5" fill="#FBF3E7"/>
-              <circle cx="42" cy="53" r="2.5" fill="#FBF3E7"/>
-              <path d="M70 60 L92 60 L90 88 L72 88 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
-              <line x1="72" y1="70" x2="90" y2="70" stroke="#FBF3E7" stroke-width="3"/>
-            </svg>
-          </div>
-          <h4>milk & cookies box</h4>
-          <div class="price">from $22</div>
-          <div class="note">saturday cartoons optional</div>
+          <div class="art" style="background:#4F66FF;"><img id="img-mother" class="art-img" alt="The mother urth bar — matcha and butterfly pea blondie"></div>
+          <h4>the mother urth bar</h4>
+          <div class="price">matcha + butterfly pea blondie</div>
+          <div class="note">the whole globe, basically</div>
         </div>
 
         <div class="card clickable" data-rot="-1" data-label="yum">
-          <div class="art" style="background:#F2C879;">
-            <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
-              <rect x="25" y="60" width="60" height="28" rx="4" fill="none" stroke="#2B241F" stroke-width="4"/>
-              <rect x="32" y="38" width="46" height="22" rx="4" fill="none" stroke="#2B241F" stroke-width="4"/>
-              <path d="M52 38 Q52 24 58 22 Q60 30 55 38" fill="none" stroke="#2B241F" stroke-width="3.5" stroke-linecap="round"/>
-              <circle cx="55" cy="18" r="4" fill="none" stroke="#2B241F" stroke-width="3"/>
-            </svg>
-          </div>
-          <h4>bespoke cake</h4>
-          <div class="price">custom quote</div>
-          <div class="note">tell me your weird idea</div>
+          <div class="art" style="background:#F2C879;"><img id="img-ladybug" class="art-img" alt="Ladybug — lemon olive oil cookie with toasted marshmallow"></div>
+          <h4>ladybug</h4>
+          <div class="price">lemon olive oil + passionfruit</div>
+          <div class="note">spots are passionfruit seeds</div>
         </div>
 
         <div class="card clickable" data-rot="2" style="margin-top:20px;" data-label="yum">
-          <div class="art" style="background:#9C9184;">
-            <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
-              <path d="M30 40 Q30 25 45 25 L65 25 Q80 25 80 40 L80 45 L30 45 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
-              <path d="M30 45 L80 45 L75 88 L35 88 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
-              <path d="M42 58 Q55 66 68 58" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <h4>earl grey latte cake</h4>
-          <div class="price">seasonal drop</div>
-          <div class="note">yes. THE pun.</div>
+          <div class="art" style="background:#9C9184;"><img id="img-bluebonnet" class="art-img" alt="Blue bonnet — lavender and blueberry shortbread sandwich"></div>
+          <h4>blue bonnet</h4>
+          <div class="price">lavender ganache + blueberry</div>
+          <div class="note">shortbread sandwich era</div>
         </div>
 
-        <div class="card clickable" data-rot="-1.5" style="margin-top:12px;" data-label="vote">
-          <div class="art" style="background:#2B241F;">
-            <svg width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
-              <text x="55" y="50" text-anchor="middle" fill="#FBF3E7" font-family="Anton, sans-serif" font-size="24">NEXT</text>
-              <text x="55" y="78" text-anchor="middle" fill="#4F66FF" font-family="Anton, sans-serif" font-size="24">DROP?</text>
-            </svg>
-          </div>
+        <div class="card clickable" data-rot="-1.5" style="margin-top:12px;" data-label="yum">
+          <div class="art" style="background:#C98B5C;"><img id="img-terrain" class="art-img" alt="Purple terrain — ube brownie with pistachio cream"></div>
+          <h4>purple terrain</h4>
+          <div class="price">ube brownie + pistachio cream</div>
+          <div class="note">crushed pistachio terrain</div>
+        </div>
+
+        <div class="card clickable" data-rot="1" data-label="vote" data-href="https://www.instagram.com/urlgreybakery/">
+          <div class="art" style="background:#2B241F;"><video id="vid-drop" muted loop autoplay playsinline preload="metadata"></video></div>
           <h4>you tell me</h4>
-          <div class="price">vote on instagram</div>
+          <div class="price">vote the next drop</div>
           <div class="note">@urlgreybakery</div>
         </div>
 
@@ -312,6 +289,7 @@
   </div>
 
   <div class="founder" data-bg="#E8B4BC">
+    <img id="img-founder" class="founder-photo reveal" alt="A urlgrey celebration cake finished with fresh edible flowers">
     <svg class="draw reveal" width="120" height="70" viewBox="0 0 90 60" style="margin-bottom:16px;" aria-hidden="true">
       <path d="M12 35 Q28 8 45 30 Q62 52 78 25" fill="none" stroke="#2B241F" stroke-width="3.5" stroke-linecap="round"/>
       <circle cx="12" cy="35" r="5" fill="none" stroke="#2B241F" stroke-width="3"/>
@@ -337,10 +315,10 @@
         <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linejoin="round" opacity="0.4"/>
       </svg>
       <div class="headline">turn cravings into chaos</div>
-      <div class="button clickable magnetic" data-label="tap">order now</div>
+      <div class="button clickable magnetic" data-label="tap" data-href="https://www.instagram.com/urlgreybakery/">order now</div>
     </div>
 
-    <footer>
+    <footer id="contact">
       <div class="foot-word">urlgrey</div>
       <div class="foot-row">
         <div class="fitem"><span class="dot"></span>dallas, tx</div>
@@ -460,6 +438,19 @@
     b.addEventListener('click', function () {
       var r = b.getBoundingClientRect();
       burst(r.left + r.width / 2, r.top + r.height / 2);
+    });
+  });
+
+  /* ---------- outbound links + in-page scroll ---------- */
+  document.querySelectorAll('[data-href]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      window.open(el.getAttribute('data-href'), '_blank', 'noopener');
+    });
+  });
+  document.querySelectorAll('[data-scroll]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var t = document.getElementById(el.getAttribute('data-scroll'));
+      if (t) t.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     });
   });
 
@@ -668,6 +659,27 @@
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
   revealEls.forEach(function (el) { io.observe(el); });
+</script>
+
+<script type="module">
+  import artemis from '@assets/660941371_18071058020700793_8707568139213128203_n_1783081514899.jpg';
+  import mother from '@assets/707763628_18078250217700793_5217927895989794532_n_1783081514900.jpg';
+  import ladybug from '@assets/671152822_18071989451700793_96889529859878490_n_1783081514899.jpg';
+  import bluebonnet from '@assets/671855940_18073132799700793_6001611900620173102_n_1783081514899.jpg';
+  import terrain from '@assets/657358127_18073132688700793_2963463959411122910_n_1783081514899.jpg';
+  import founder from '@assets/730045704_18082087358700793_9092790293979277822_n_1783081514900.jpg';
+  import drop from '@assets/SaveClip.App_AQOl3woqnNw5oIxxwFk2_qF1iVmYqRG4KG4lFwgR34zjSqtLk_1783081573772.mp4';
+
+  function set(id, src) { var e = document.getElementById(id); if (e) e.src = src; }
+  set('img-artemis', artemis);
+  set('img-mother', mother);
+  set('img-ladybug', ladybug);
+  set('img-bluebonnet', bluebonnet);
+  set('img-terrain', terrain);
+  set('img-founder', founder);
+
+  var v = document.getElementById('vid-drop');
+  if (v) { v.src = drop; v.load(); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
 </script>
 
 </body>

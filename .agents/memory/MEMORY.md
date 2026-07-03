@@ -1,0 +1,1 @@
+- [urlgrey asset wiring](urlgrey-assets.md) — urlgrey/index.html is vanilla HTML (React never mounts); use @assets module imports for attached_assets, keep fixed-height media containers, keep template fonts (no Fredoka).
