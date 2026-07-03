@@ -42,7 +42,8 @@
   .pin-inner { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
   .slot { position: absolute; opacity: 0; will-change: transform, opacity; display: flex; align-items: center; gap: 20px; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; color: #2B241F; font-size: clamp(64px, 12vw, 130px); line-height: 1; backface-visibility: hidden; text-align: center; }
   .slot.blue { color: #4F66FF; }
-  .slot .chip { width: clamp(90px, 12vw, 130px); height: clamp(90px, 12vw, 130px); border-radius: 18px; border: 4px solid #2B241F; display: inline-block; }
+  .slot .chip { width: clamp(90px, 12vw, 130px); height: clamp(90px, 12vw, 130px); border-radius: 18px; border: 4px solid #2B241F; display: inline-block; overflow: hidden; box-shadow: 5px 5px 0 #2B241F; }
+  .slot .chip img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .floater { position: absolute; will-change: transform; opacity: 0.9; }
   .progress-track { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); width: 3px; height: 160px; background: rgba(43,36,31,0.15); z-index: 400; border-radius: 2px; }
   .progress-fill { width: 100%; background: #4F66FF; border-radius: 2px; height: 0%; }
@@ -88,7 +89,7 @@
   .founder-photo { width: min(340px, 78vw); height: 300px; object-fit: cover; border: 3px solid #2B241F; border-radius: 22px; box-shadow: 8px 8px 0 #2B241F; margin: 0 auto 30px; display: block; transform: rotate(-1.5deg); background: #E8B4BC; }
 
   /* first-scroll cookie planets */
-  .floater.planet { width: clamp(150px, 20vw, 300px); height: auto; opacity: 1; }
+  .floater.planet { width: clamp(225px, 30vw, 450px); height: auto; opacity: 1; }
   .planet-img { display: block; width: 100%; height: auto; filter: drop-shadow(0 20px 34px rgba(43,36,31,0.28)); animation: planetBob 7s ease-in-out infinite; }
   .planet.p2 .planet-img { animation-duration: 9.5s; animation-delay: -3s; }
   @keyframes planetBob { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(3.5deg); } }
@@ -199,12 +200,12 @@
       </div>
 
       <div class="slot" data-i="0"><span>pop-up</span></div>
-      <div class="slot" data-i="1"><span>cakes</span><span class="chip" style="background:#F2C879;"></span></div>
+      <div class="slot" data-i="1"><span>cakes</span><span class="chip" style="background:#F2C879;"><img id="chip-cakes" alt="A urlgrey celebration cake with edible flowers"></span></div>
       <div class="slot blue" data-i="2"><span>dallas</span></div>
       <div class="slot" data-i="3"><span>actually craves</span></div>
-      <div class="slot" data-i="4"><span>faster</span><span class="chip" style="background:#C98B5C;"></span></div>
+      <div class="slot" data-i="4"><span>faster</span><span class="chip" style="background:#C98B5C;"><img id="chip-faster" alt="Purple terrain ube brownie cookie"></span></div>
       <div class="slot" data-i="5"><span>than your timeline</span></div>
-      <div class="slot blue" data-i="6"><span>can scroll</span><span class="chip" style="background:#9C9184;"></span></div>
+      <div class="slot blue" data-i="6"><span>can scroll</span><span class="chip" style="background:#9C9184;"><img id="chip-scroll" alt="Ladybug lemon olive oil cookie"></span></div>
 
     </div>
   </div>
@@ -769,6 +770,9 @@
   set('img-bluebonnet', bluebonnet);
   set('img-terrain', terrain);
   set('img-founder', founder);
+  set('chip-cakes', founder);
+  set('chip-faster', terrain);
+  set('chip-scroll', ladybug);
 
   var v = document.getElementById('vid-drop');
   if (v) { v.src = drop; v.load(); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
