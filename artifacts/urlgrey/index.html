@@ -494,6 +494,7 @@
   /* ---------- cached layout metrics (recomputed only on resize/load) ---------- */
   var vhG = window.innerHeight, wwG = window.innerWidth;
   var pinTop = 0, pinDist = 1, hTopG = 0, hDist = 1, maxShift = 0, docH = 1, marqHalf = 0;
+  var marqTop = 0, marqH = 0, footTop = 1e9, footH = 0;
   var secData = [];
   function absTop(el) { return el.getBoundingClientRect().top + window.scrollY; }
   function measure() {
@@ -503,10 +504,15 @@
     maxShift = Math.max(0, hTrack.scrollWidth - wwG + wwG * 0.12);
     docH = Math.max(1, document.documentElement.scrollHeight - vhG);
     marqHalf = marqueeTrack.scrollWidth / 2;
+    marqTop = absTop(marqueeTrack); marqH = marqueeTrack.offsetHeight;
+    footTop = footWord ? absTop(footWord) : 1e9; footH = footWord ? footWord.offsetHeight : 0;
     secData = [].slice.call(bgSections).map(function (s) {
       return { bg: s.getAttribute('data-bg'), top: absTop(s), h: s.offsetHeight };
     });
     measureMagnets();
+    /* force one full scroll-block pass next frame so visibility flags + positions resync
+       even if scrollY didn't change (resize / webfont load / mobile viewport shifts) */
+    lastY = -1;
   }
   measure();
   window.addEventListener('resize', measure);
@@ -519,23 +525,31 @@
   var marqueeOffset = 0;
   var lastBg = '';
   var lastT = performance.now();
+  var lastY = -1, pmx = -99999, pmy = -99999;
+  var lastPct = -1, lastHShift = -99999;
+  var marqVisible = false, footVisible = false;
 
   function frame(now) {
     var dt = Math.min(64, now - lastT) / 16.67;
     lastT = now;
 
     var y = window.scrollY;
+    var scrolled = (y !== lastY);
+    var mouseMoved = (mx !== pmx) || (my !== pmy);
 
-    /* cursor lerp (compositor-only writes) */
-    cx += (mx - cx) * 0.35;
-    cy += (my - cy) * 0.35;
-    rx += (mx - rx) * 0.15;
-    ry += (my - ry) * 0.15;
-    cursor.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0) translate(-50%,-50%)';
-    ring.style.transform = 'translate3d(' + rx + 'px,' + ry + 'px,0) translate(-50%,-50%)';
-
-    /* magnetic buttons (cached centers, no layout reads) */
+    /* cursor lerp (only while it hasn't caught up to the pointer) */
     if (finePointer) {
+      if (Math.abs(mx - cx) > 0.1 || Math.abs(my - cy) > 0.1 ||
+          Math.abs(mx - rx) > 0.1 || Math.abs(my - ry) > 0.1) {
+        cx += (mx - cx) * 0.35; cy += (my - cy) * 0.35;
+        rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
+        cursor.style.transform = 'translate3d(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px,0) translate(-50%,-50%)';
+        ring.style.transform = 'translate3d(' + rx.toFixed(2) + 'px,' + ry.toFixed(2) + 'px,0) translate(-50%,-50%)';
+      }
+    }
+
+    /* magnetic buttons (only when pointer or scroll changed; writes only on change) */
+    if (finePointer && (mouseMoved || scrolled)) {
       for (var mi = 0; mi < magnetData.length; mi++) {
         var d = magnetData[mi];
         var vy = d.sticky ? d.cyView : d.cyDoc - y;
@@ -549,71 +563,93 @@
       }
     }
 
-    /* scroll velocity */
+    /* scroll velocity (decays every frame so marquee eases out) */
     scrollVel = scrollVel * 0.85 + (y - lastScroll) * 0.15;
     lastScroll = y;
 
-    /* progress bar */
-    progressFill.style.height = clamp(y / docH, 0, 1) * 100 + '%';
+    /* --- scroll-driven work: only when the page actually moved --- */
+    if (scrolled) {
+      /* progress bar */
+      var pct = Math.round(clamp(y / docH, 0, 1) * 1000) / 10;
+      if (pct !== lastPct) { progressFill.style.height = pct + '%'; lastPct = pct; }
 
-    /* pinned word slots */
-    var progress = clamp((y - pinTop) / pinDist, 0, 1);
-    var slotProgress = progress * slotsArr.length;
-    for (var si = 0; si < slotsArr.length; si++) {
-      var slot = slotsArr[si];
-      var local = slotProgress - si;
-      var opacity = 0, scale = 0.7, ty = 36;
-      if (local >= -0.15 && local < 1.15) {
-        if (local < 0.2) {
-          var t = easeOutCubic(clamp(local / 0.2, 0, 1));
-          opacity = t; scale = 0.7 + 0.3 * t; ty = 36 * (1 - t);
-        } else if (local < 0.8) {
-          opacity = 1; scale = 1; ty = 0;
-        } else {
-          var t2 = easeInCubic(clamp((local - 0.8) / 0.2, 0, 1));
-          opacity = 1 - t2; scale = 1 + 0.12 * t2; ty = -26 * t2;
+      /* pinned word slots (write each slot only when its value changed) */
+      var progress = clamp((y - pinTop) / pinDist, 0, 1);
+      var slotProgress = progress * slotsArr.length;
+      for (var si = 0; si < slotsArr.length; si++) {
+        var slot = slotsArr[si];
+        var local = slotProgress - si;
+        var opacity = 0, scale = 0.7, ty = 36;
+        if (local >= -0.15 && local < 1.15) {
+          if (local < 0.2) {
+            var t = easeOutCubic(clamp(local / 0.2, 0, 1));
+            opacity = t; scale = 0.7 + 0.3 * t; ty = 36 * (1 - t);
+          } else if (local < 0.8) {
+            opacity = 1; scale = 1; ty = 0;
+          } else {
+            var t2 = easeInCubic(clamp((local - 0.8) / 0.2, 0, 1));
+            opacity = 1 - t2; scale = 1 + 0.12 * t2; ty = -26 * t2;
+          }
+        }
+        opacity = Math.round(opacity * 1000) / 1000;
+        scale = Math.round(scale * 1000) / 1000;
+        ty = Math.round(ty * 10) / 10;
+        if (opacity !== slot._o) { slot.style.opacity = opacity; slot._o = opacity; }
+        if (ty !== slot._ty || scale !== slot._s) {
+          slot.style.transform = 'translate3d(0,' + ty + 'px,0) scale(' + scale + ')';
+          slot._ty = ty; slot._s = scale;
         }
       }
-      slot.style.opacity = opacity;
-      slot.style.transform = 'translate3d(0,' + ty + 'px,0) scale(' + scale + ')';
+
+      /* horizontal card track */
+      var hShift = Math.round(-clamp((y - hTopG) / hDist, 0, 1) * maxShift * 10) / 10;
+      if (hShift !== lastHShift) {
+        hTrack.style.transform = 'translate3d(' + hShift + 'px,0,0)';
+        lastHShift = hShift;
+      }
+
+      /* visibility flags for the continuous animations */
+      marqVisible = (marqTop < y + vhG) && (marqTop + marqH > y);
+      footVisible = (footTop < y + vhG) && (footTop + footH > y);
+
+      /* section background (write only on change) */
+      var mid = y + vhG * 0.5;
+      var current = '#FBF3E7';
+      for (var ci = 0; ci < secData.length; ci++) {
+        var sc = secData[ci];
+        if (sc.top < mid && sc.top + sc.h > mid) current = sc.bg;
+      }
+      if (current !== lastBg) { document.body.style.background = current; lastBg = current; }
     }
 
-    /* floaters: scroll parallax + mouse drift */
-    var nmx = (mx / wwG - 0.5);
-    var nmy = (my / vhG - 0.5);
-    for (var fi = 0; fi < floatersArr.length; fi++) {
-      var fo = floatersArr[fi];
-      var mxShift = finePointer ? nmx * fo.mfac * 26 : 0;
-      var myShift = finePointer ? nmy * fo.mfac * 26 : 0;
-      fo.el.style.transform = 'translate3d(' + mxShift + 'px,' + ((y * fo.speed * -0.08) + myShift) + 'px,0) rotate(' + (fo.rot + y * 0.01 * (fo.rot > 0 ? 1 : -1)) + 'deg)';
+    /* floaters: parallax + mouse drift (only when scroll or pointer changed; write on change) */
+    if (scrolled || mouseMoved) {
+      var nmx = (mx / wwG - 0.5), nmy = (my / vhG - 0.5);
+      for (var fi = 0; fi < floatersArr.length; fi++) {
+        var fo = floatersArr[fi];
+        var mxShift = finePointer ? Math.round(nmx * fo.mfac * 260) / 10 : 0;
+        var myShift = finePointer ? Math.round(nmy * fo.mfac * 260) / 10 : 0;
+        var fy = Math.round((y * fo.speed * -0.08 + myShift) * 10) / 10;
+        var frot = Math.round((fo.rot + y * 0.01 * (fo.rot > 0 ? 1 : -1)) * 100) / 100;
+        var str = 'translate3d(' + mxShift + 'px,' + fy + 'px,0) rotate(' + frot + 'deg)';
+        if (str !== fo.cur) { fo.el.style.transform = str; fo.cur = str; }
+      }
     }
 
-    /* horizontal card track */
-    var hProg = clamp((y - hTopG) / hDist, 0, 1);
-    hTrack.style.transform = 'translate3d(' + (-hProg * maxShift) + 'px,0,0)';
-
-    /* marquee: continuous drift, reacts to scroll velocity */
-    if (!reduceMotion && marqHalf > 0) {
+    /* marquee: continuous drift while on screen, reacts to scroll velocity */
+    if (!reduceMotion && marqHalf > 0 && marqVisible) {
       marqueeOffset += (0.9 + Math.abs(scrollVel) * 0.35) * dt;
       if (marqueeOffset >= marqHalf) marqueeOffset -= marqHalf;
       var skew = clamp(scrollVel * 0.25, -8, 8);
       marqueeTrack.style.transform = 'translateX(' + (-marqueeOffset) + 'px) skewX(' + skew + 'deg)';
     }
 
-    /* footer word gentle wobble */
-    if (!reduceMotion && footWord) {
+    /* footer word gentle wobble while on screen */
+    if (!reduceMotion && footWord && footVisible) {
       footWord.style.transform = 'rotate(' + (Math.sin(now / 900) * 1.4 - 3) + 'deg)';
     }
 
-    /* section background (write only on change) */
-    var mid = y + vhG * 0.5;
-    var current = '#FBF3E7';
-    for (var ci = 0; ci < secData.length; ci++) {
-      var sc = secData[ci];
-      if (sc.top < mid && sc.top + sc.h > mid) current = sc.bg;
-    }
-    if (current !== lastBg) { document.body.style.background = current; lastBg = current; }
-
+    lastY = y; pmx = mx; pmy = my;
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
