@@ -45,6 +45,7 @@
   .slot.line { display: block; max-width: min(1100px, 88vw); font-size: clamp(40px, 8vw, 104px); line-height: 1.04; }
   .slot .blueword { color: #4F66FF; }
   .slot .scriptword { font-family: 'Homemade Apple', cursive; text-transform: none; color: #C98B5C; }
+  .slot .blockword { position: relative; z-index: 2; font-family: 'Homemade Apple', cursive; text-transform: none; color: #FBF3E7; background: #4F66FF; border-radius: 14px; padding: 0 0.24em 0.1em; display: inline-block; transform: rotate(-2deg); box-shadow: 4px 4px 0 #2B241F; }
   .floater { position: absolute; will-change: transform; opacity: 0.9; }
   .progress-track { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); width: 3px; height: 160px; background: rgba(43,36,31,0.15); z-index: 400; border-radius: 2px; }
   .progress-fill { width: 100%; background: #4F66FF; border-radius: 2px; height: 0%; }
@@ -86,6 +87,17 @@
   .oc-go { position: relative; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 15px; color: #2B241F; letter-spacing: 0.3px; }
   .order-btn { display: inline-block; background: #4F66FF; color: #FBF3E7; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(18px, 2.6vw, 26px); padding: 20px 40px; border-radius: 40px; border: 3px solid #2B241F; box-shadow: 6px 6px 0 #2B241F; will-change: transform; transition: transform 0.2s ease, box-shadow 0.2s ease; }
   .order-btn:hover { transform: translateY(-3px); box-shadow: 9px 11px 0 #2B241F; }
+  .order-cookie { position: absolute; top: -30px; right: 1%; width: clamp(120px, 15vw, 205px); height: auto; transform: rotate(-9deg); filter: drop-shadow(0 16px 26px rgba(43,36,31,0.3)); animation: planetBob 8s ease-in-out infinite; pointer-events: none; z-index: 3; }
+
+  .inquiries { max-width: 1000px; margin: 0 auto; padding: 40px 28px 20px; display: flex; gap: 44px; align-items: center; flex-wrap: wrap; }
+  .inquiries .inq-media { flex: 1; min-width: 260px; }
+  .inquiries .inq-media img { width: 100%; height: auto; display: block; border: 3px solid #2B241F; border-radius: 26px; box-shadow: 10px 10px 0 #2B241F; transform: rotate(-1.5deg); background: #4F66FF; }
+  .inquiries .inq-copy { flex: 1; min-width: 260px; }
+  .inquiries .inq-copy .tag.two { margin: 0 0 6px; }
+  .inq-title { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(38px, 5.5vw, 68px); line-height: 0.98; margin-bottom: 18px; }
+  .inq-text { font-size: 17px; color: #5A5248; line-height: 1.55; margin-bottom: 28px; max-width: 440px; }
+  .inq-btn { display: inline-block; background: #2B241F; color: #FBF3E7; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 18px; padding: 18px 38px; border-radius: 40px; box-shadow: 6px 6px 0 #4F66FF; will-change: transform; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .inq-btn:hover { transform: translateY(-3px); box-shadow: 9px 11px 0 #4F66FF; }
 
   .h-wrap { position: relative; height: 400vh; }
   .h-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
@@ -150,9 +162,12 @@
     #loader .word, .scroll-hint { animation: none; }
     .reveal { opacity: 1; transform: none; }
     .planet-img { animation: none; }
+    .order-cookie { animation: none; }
   }
   @media (max-width: 640px) {
     .slot.line { font-size: clamp(34px, 10vw, 60px); }
+    .order-cookie { position: static; display: block; margin: 0 auto 4px; width: 130px; transform: rotate(-6deg); }
+    .inquiries { gap: 26px; }
   }
 </style>
 </head>
@@ -219,7 +234,7 @@
 
       <div class="slot line" data-i="0">pop-up cakes in <span class="blueword">dallas</span></div>
       <div class="slot line" data-i="1">that you'll <span class="scriptword">actually</span> crave</div>
-      <div class="slot line" data-i="2">faster than your <span class="scriptword">timeline</span> can scroll</div>
+      <div class="slot line" data-i="2">faster than your <span class="blockword">timeline</span> can scroll</div>
 
     </div>
   </div>
@@ -280,6 +295,7 @@
   </main>
 
   <section class="order" id="order">
+    <img id="img-cookie" class="order-cookie" alt="a gooey brown butter chocolate chunk cookie topped with flaky salt and edible flowers">
     <span class="tag two reveal" style="color:#4F66FF; transform:rotate(-2deg);">psst — it's bakery o'clock</span>
     <h2 class="order-title reveal">order the good stuff</h2>
     <p class="order-sub reveal">pickup, delivery &amp; shipping across dallas. tap a category to shop the latest drop on square.</p>
@@ -430,6 +446,18 @@
       <div class="button clickable magnetic" data-label="tap" data-href="https://urlgrey.square.site/s/shop">order now</div>
     </div>
 
+    <section class="inquiries reveal">
+      <div class="inq-media">
+        <img id="img-inquiries" alt="urlgrey menu postcard — lady bug, mother urth bar, blue bonnet, Artemis II and terrain bar treats on cornflower blue">
+      </div>
+      <div class="inq-copy">
+        <span class="tag two" style="color:#4F66FF;">got a sweet idea?</span>
+        <div class="inq-title">let's make something</div>
+        <p class="inq-text">custom cakes, pop-up collabs, or a big batch for your people — send us the details and we'll cook up the rest.</p>
+        <div class="inq-btn clickable magnetic" data-label="say hi" data-href="mailto:urlgreybakery@gmail.com">start an inquiry →</div>
+      </div>
+    </section>
+
     <footer id="contact">
       <div class="foot-word">urlgrey</div>
       <div class="foot-row">
@@ -556,7 +584,10 @@
   /* ---------- outbound links + in-page scroll ---------- */
   document.querySelectorAll('[data-href]').forEach(function (el) {
     el.addEventListener('click', function () {
-      window.open(el.getAttribute('data-href'), '_blank', 'noopener');
+      var href = el.getAttribute('data-href');
+      if (!href) return;
+      if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) { window.location.href = href; }
+      else { window.open(href, '_blank', 'noopener'); }
     });
   });
   document.querySelectorAll('[data-scroll]').forEach(function (el) {
@@ -792,6 +823,8 @@
   import bluebonnet from '@assets/671855940_18073132799700793_6001611900620173102_n_1783081514899.jpg';
   import terrain from '@assets/657358127_18073132688700793_2963463959411122910_n_1783081514899.jpg';
   import founder from '@assets/730045704_18082087358700793_9092790293979277822_n_1783081514900.jpg';
+  import inquiries from '@assets/662807609_18073132679700793_348156182660851317_n_1783105247134.jpg';
+  import cookie from '@assets/image_1783105290379.png';
   import drop from '@assets/SaveClip.App_AQOl3woqnNw5oIxxwFk2_qF1iVmYqRG4KG4lFwgR34zjSqtLk_1783081573772.mp4';
   import planetA from '@assets/artemis-planet.png';
   import planetB from '@assets/image_1783101557653.png';
@@ -811,6 +844,8 @@
   set('img-bluebonnet', bluebonnet);
   set('img-terrain', terrain);
   set('img-founder', founder);
+  set('img-inquiries', inquiries);
+  set('img-cookie', cookie);
 
   var v = document.getElementById('vid-drop');
   if (v) { v.src = drop; v.load(); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
