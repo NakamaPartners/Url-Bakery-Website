@@ -72,6 +72,20 @@
   .step .circle { border-radius: 50%; width: 96px; height: 96px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); }
   .step:hover .circle { transform: rotate(12deg) scale(1.08); }
   .step .label { font-family: 'Anton', sans-serif; font-size: 19px; text-transform: uppercase; }
+  .step .sub { font-size: 13.5px; color: #5A5248; margin-top: 8px; line-height: 1.35; }
+
+  .order { max-width: 1000px; margin: 0 auto; padding: 20px 28px 90px; text-align: center; position: relative; }
+  .order-title { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(40px, 7vw, 82px); line-height: 0.98; margin: 4px 0 14px; }
+  .order-sub { font-size: 17px; color: #5A5248; max-width: 560px; margin: 0 auto 40px; line-height: 1.5; }
+  .order-grid { display: flex; gap: 22px; flex-wrap: wrap; justify-content: center; margin-bottom: 44px; }
+  .ocard { flex: 1; min-width: 220px; max-width: 300px; background: #FBF3E7; border: 3px solid #2B241F; border-radius: 24px; padding: 30px 22px; box-shadow: 8px 8px 0 #2B241F; text-align: left; transition: transform 0.28s cubic-bezier(.34,1.56,.64,1), box-shadow 0.28s ease; position: relative; overflow: hidden; }
+  .ocard::before { content: ''; position: absolute; top: -38px; right: -38px; width: 116px; height: 116px; border-radius: 50%; background: var(--oc); }
+  .ocard:hover { transform: translateY(-8px) rotate(-1.5deg); box-shadow: 12px 14px 0 #2B241F; }
+  .oc-badge { position: relative; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 30px; margin-bottom: 10px; }
+  .oc-note { position: relative; font-size: 14.5px; color: #5A5248; line-height: 1.4; margin-bottom: 22px; min-height: 40px; }
+  .oc-go { position: relative; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 15px; color: #2B241F; letter-spacing: 0.3px; }
+  .order-btn { display: inline-block; background: #4F66FF; color: #FBF3E7; font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(18px, 2.6vw, 26px); padding: 20px 40px; border-radius: 40px; border: 3px solid #2B241F; box-shadow: 6px 6px 0 #2B241F; will-change: transform; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .order-btn:hover { transform: translateY(-3px); box-shadow: 9px 11px 0 #2B241F; }
 
   .h-wrap { position: relative; height: 400vh; }
   .h-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
@@ -154,7 +168,7 @@
     <div class="navlinks">
       <span class="clickable" data-scroll="hWrap">the goods</span>
       <span class="clickable" data-scroll="contact">the drops</span>
-      <div class="btn clickable magnetic" data-label="tap" data-href="https://www.instagram.com/urlgreybakery/">order now</div>
+      <div class="btn clickable magnetic" data-label="tap" data-scroll="order">order now</div>
     </div>
   </nav>
 
@@ -227,7 +241,7 @@
     </div>
 
     <div class="steps">
-      <div class="step reveal clickable" data-label="ooh">
+      <div class="step reveal clickable" data-label="ooh" data-scroll="order">
         <div class="circle" style="background:#F2C879;">
           <svg class="draw" width="52" height="52" viewBox="0 0 44 44" aria-hidden="true">
             <rect x="8" y="14" width="28" height="22" rx="3" fill="none" stroke="#2B241F" stroke-width="2.5"/>
@@ -236,8 +250,9 @@
           </svg>
         </div>
         <div class="label">catch the drops</div>
+        <div class="sub">small-batch releases, gone in a blink</div>
       </div>
-      <div class="step reveal clickable" data-label="ooh">
+      <div class="step reveal clickable" data-label="ooh" data-href="https://www.instagram.com/urlgreybakery/">
         <div class="circle" style="background:#C98B5C;">
           <svg class="draw" width="48" height="52" viewBox="0 0 40 44" aria-hidden="true">
             <path d="M8 6 L32 6 L28 40 L12 40 Z" fill="none" stroke="#FBF3E7" stroke-width="2.5" stroke-linejoin="round"/>
@@ -246,8 +261,9 @@
           </svg>
         </div>
         <div class="label">order bespoke</div>
+        <div class="sub">custom cakes, made your way</div>
       </div>
-      <div class="step reveal clickable" data-label="ooh">
+      <div class="step reveal clickable" data-label="ooh" data-scroll="contact">
         <div class="circle" style="background:#4F66FF;">
           <svg class="draw" width="50" height="50" viewBox="0 0 42 42" aria-hidden="true">
             <rect x="6" y="9" width="30" height="21" rx="3" fill="none" stroke="#FBF3E7" stroke-width="2.5"/>
@@ -258,9 +274,34 @@
           </svg>
         </div>
         <div class="label">find the pop-up</div>
+        <div class="sub">catch us popping up around dallas</div>
       </div>
     </div>
   </main>
+
+  <section class="order" id="order">
+    <span class="tag two reveal" style="color:#4F66FF; transform:rotate(-2deg);">psst — it's bakery o'clock</span>
+    <h2 class="order-title reveal">order the good stuff</h2>
+    <p class="order-sub reveal">pickup, delivery &amp; shipping across dallas. tap a category to shop the latest drop on square.</p>
+    <div class="order-grid">
+      <div class="ocard reveal clickable" data-label="shop" data-href="https://urlgrey.square.site/s/shop" style="--oc:#F2C879;">
+        <div class="oc-badge">cookies</div>
+        <div class="oc-note">crackly, chunky &amp; a little chaotic</div>
+        <div class="oc-go">shop cookies →</div>
+      </div>
+      <div class="ocard reveal clickable" data-label="shop" data-href="https://urlgrey.square.site/s/shop" style="--oc:#C98B5C;">
+        <div class="oc-badge">bars</div>
+        <div class="oc-note">thick, fudgy &amp; layered to the edge</div>
+        <div class="oc-go">shop bars →</div>
+      </div>
+      <div class="ocard reveal clickable" data-label="shop" data-href="https://urlgrey.square.site/s/shop" style="--oc:#4F66FF;">
+        <div class="oc-badge">cakes</div>
+        <div class="oc-note">celebration-worthy &amp; fully bespoke</div>
+        <div class="oc-go">shop cakes →</div>
+      </div>
+    </div>
+    <div class="order-btn clickable magnetic" data-label="tap" data-href="https://urlgrey.square.site/s/shop">shop the full menu on square →</div>
+  </section>
 
   <div class="h-wrap" id="hWrap" data-bg="#F2C879">
     <div class="h-sticky">
@@ -386,7 +427,7 @@
         <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linejoin="round" opacity="0.4"/>
       </svg>
       <div class="headline">turn cravings into chaos</div>
-      <div class="button clickable magnetic" data-label="tap" data-href="https://www.instagram.com/urlgreybakery/">order now</div>
+      <div class="button clickable magnetic" data-label="tap" data-href="https://urlgrey.square.site/s/shop">order now</div>
     </div>
 
     <footer id="contact">
