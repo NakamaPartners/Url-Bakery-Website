@@ -163,6 +163,10 @@
   @media (hover: none), (pointer: coarse) {
     html, body, a, .clickable { cursor: auto; }
     #cursor, #cursorRing { display: none; }
+    /* no hover on touch — reveal the step card flair at rest */
+    .step::before { opacity: 0.7; }
+    .step .label::after { transform: scaleX(1); }
+    .step .circle::after { opacity: 0.5; }
   }
   @media (prefers-reduced-motion: reduce) {
     #loader .word, .scroll-hint { animation: none; }
@@ -174,7 +178,27 @@
   @media (max-width: 640px) {
     .slot.line { font-size: clamp(34px, 10vw, 60px); }
     .order-cookie { position: static; display: block; margin: 0 auto 4px; width: 130px; transform: rotate(-6deg); }
-    .inquiries { gap: 26px; }
+
+    /* nav: logo + primary CTA only (secondary jump links hidden to prevent overflow) */
+    nav { padding: 14px 5vw; }
+    .logo { font-size: 32px; }
+    .navlinks { gap: 12px; }
+    .navlinks span.clickable { display: none; }
+    .navlinks .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 24px; font-size: 14px; }
+
+    /* tighter rhythm on small screens */
+    .hero-intro { padding: 40px 6vw 0; }
+    .hero-intro .hand { font-size: 24px; }
+    main { padding: 0 22px; }
+    .steps { gap: 18px; margin: 24px 0 52px; }
+    .order { padding: 10px 20px 70px; }
+    .order-grid { gap: 16px; }
+    .ocard { padding: 26px 20px; }
+    .inquiries { gap: 26px; padding: 30px 22px 10px; }
+    .founder { padding: 70px 6vw; }
+    .cta { padding: 52px 26px; margin: 0 5vw; }
+    footer { padding: 64px 7vw 26px; margin-top: 64px; }
+    .progress-track { display: none; }
   }
 </style>
 </head>
