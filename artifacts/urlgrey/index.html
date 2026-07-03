@@ -45,8 +45,6 @@
   .slot.line { display: block; max-width: min(1100px, 88vw); font-size: clamp(40px, 8vw, 104px); line-height: 1.04; }
   .slot .blueword { color: #4F66FF; }
   .slot .scriptword { font-family: 'Homemade Apple', cursive; text-transform: none; color: #C98B5C; }
-  .umami-panel { display: inline-block; background: #2B241F; border-radius: 30px; padding: 42px 56px; box-shadow: 12px 12px 0 #4F66FF; }
-  .umami-panel img { display: block; width: clamp(280px, 50vw, 600px); height: auto; }
   .floater { position: absolute; will-change: transform; opacity: 0.9; }
   .progress-track { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); width: 3px; height: 160px; background: rgba(43,36,31,0.15); z-index: 400; border-radius: 2px; }
   .progress-fill { width: 100%; background: #4F66FF; border-radius: 2px; height: 0%; }
@@ -115,11 +113,7 @@
   .founder h3 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(52px, 9vw, 96px); line-height: 0.95; }
   .founder .hl { position: relative; display: inline-block; color: #4F66FF; }
   .founder .hl-draw { position: absolute; left: -8%; top: -14%; width: 116%; height: 128%; overflow: visible; pointer-events: none; }
-  .founder .hand { font-family: 'Homemade Apple', cursive; font-size: 26px; color: #2538AB; display: inline-block; transform: rotate(-2deg); margin-top: 18px; }
-  .founder .about-copy { font-family: 'Poppins', sans-serif; font-weight: 500; font-size: clamp(22px, 3.3vw, 42px); line-height: 1.36; max-width: 900px; margin: 22px auto 4px; color: #2B241F; }
-  .founder .about-copy .script { font-family: 'Homemade Apple', cursive; color: #2538AB; }
-  .founder .about-copy .name { font-weight: 700; color: #2B241F; }
-  .founder .about-copy u { text-decoration-thickness: 3px; text-underline-offset: 6px; text-decoration-color: #2538AB; }
+  .founder .hand { font-family: 'Homemade Apple', cursive; font-size: 26px; color: #4F66FF; display: inline-block; transform: rotate(-2deg); margin-top: 18px; }
 
   .cta { background: #4F66FF; border-radius: 28px; padding: 70px 40px; text-align: center; transform: rotate(-0.5deg); margin: 0 6vw 0; position: relative; overflow: hidden; }
   .cta .headline { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(38px, 6vw, 64px); color: #FBF3E7; margin-bottom: 26px; line-height: 1; }
@@ -144,8 +138,6 @@
     .planet-img { animation: none; }
   }
   @media (max-width: 640px) {
-    .umami-panel { padding: 26px 24px; border-radius: 22px; box-shadow: 8px 8px 0 #4F66FF; }
-    .umami-panel img { width: min(72vw, 420px); }
     .slot.line { font-size: clamp(34px, 10vw, 60px); }
   }
 </style>
@@ -212,7 +204,7 @@
       </div>
 
       <div class="slot line" data-i="0">pop-up cakes in <span class="blueword">dallas</span></div>
-      <div class="slot" data-i="1"><span class="umami-panel"><img id="img-umami" alt="umami from scratch"></span></div>
+      <div class="slot line" data-i="1">that you'll <span class="scriptword">actually</span> crave</div>
       <div class="slot line" data-i="2">faster than your <span class="scriptword">timeline</span> can scroll</div>
 
     </div>
@@ -374,9 +366,9 @@
       <circle cx="12" cy="35" r="5" fill="none" stroke="#2B241F" stroke-width="3"/>
       <circle cx="78" cy="25" r="5" fill="none" stroke="#2B241F" stroke-width="3"/>
     </svg>
-    <p class="reveal">meet the maker</p>
-    <p class="about-copy reveal"><span class="script">Umami From Scratch</span> is the humble pursuit of <span class="name">Divs Ray</span>, whose creations highlight flavors of the spice routes in <u>bread</u>, <u>pastries</u>, <u>cakes</u> and more.</p>
-    <span class="hand reveal">— divs, probably covered in flour</span>
+    <p class="reveal">urlgrey started with one mum, a stand mixer, and a bad pun:</p>
+    <h3 class="reveal">baking should<br>feel <span class="hl">less serious<svg class="hl-draw draw" viewBox="0 0 300 90" preserveAspectRatio="none" aria-hidden="true"><path d="M14 62 Q80 84 150 70 Q232 54 288 66 Q262 80 150 84 Q60 86 20 74" fill="none" stroke="#4F66FF" stroke-width="5" stroke-linecap="round"/></svg></span></h3>
+    <span class="hand reveal">— christalyn, probably covered in flour</span>
   </div>
 
   <div data-bg="#FBF3E7">
@@ -762,7 +754,6 @@
   import drop from '@assets/SaveClip.App_AQOl3woqnNw5oIxxwFk2_qF1iVmYqRG4KG4lFwgR34zjSqtLk_1783081573772.mp4';
   import planetA from '@assets/artemis-planet.png';
   import planetB from '@assets/image_1783101557653.png';
-  import umami from '@assets/image_1783104426514.png';
   import r1 from '@assets/SaveClip.App_AQM2Pcd9dOmzDkVIkH8A8butAt0UZPtEQs-F1q__8Omr_G8Lo_1783081514900.mp4';
   import r2 from '@assets/SaveClip.App_AQMA53hX5_dWcvaWMTqHaZGDN668Ui_qcKrJvR9MtVFv9e5Lz_1783081514900.mp4';
   import r3 from '@assets/SaveClip.App_AQMruMCW3wJ1wDsFKwSwpgnYjaPKO58fWT1VaPysBDuR4LlAm_1783081514900.mp4';
@@ -779,7 +770,6 @@
   set('img-bluebonnet', bluebonnet);
   set('img-terrain', terrain);
   set('img-founder', founder);
-  set('img-umami', umami);
 
   var v = document.getElementById('vid-drop');
   if (v) { v.src = drop; v.load(); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
