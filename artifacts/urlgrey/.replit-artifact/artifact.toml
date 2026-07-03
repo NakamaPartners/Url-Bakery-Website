@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "urlgrey"
+version = "1.0.0"
+id = "artifacts/urlgrey"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25918
+
+[services.development]
+run = "pnpm --filter @workspace/urlgrey run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/urlgrey", "run", "build" ]
+publicDir = "artifacts/urlgrey/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25918"
+BASE_PATH = "/"

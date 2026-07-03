@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>urlgrey</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Homemade+Apple&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { cursor: none; }
+  body { font-family: 'Poppins', sans-serif; color: #2B241F; overflow-x: hidden; background: #FBF3E7; transition: background 0.8s ease; }
+  a, .clickable { cursor: none; }
+
+  #loader { position: fixed; inset: 0; background: #2B241F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.6s ease, visibility 0.6s ease; }
+  #loader .word { font-family: 'Homemade Apple', cursive; color: #FBF3E7; font-size: 64px; transform: rotate(-3deg); }
+  #loader .pct { color: #4F66FF; font-size: 15px; margin-top: 16px; }
+  #loader.hide { opacity: 0; visibility: hidden; }
+
+  #cursor { position: fixed; top: 0; left: 0; width: 22px; height: 22px; border-radius: 50%; background: #4F66FF; opacity: 0.85; pointer-events: none; z-index: 1000; transform: translate3d(-50%,-50%,0); transition: width 0.15s ease, height 0.15s ease, background 0.15s ease; }
+
+  nav { position: sticky; top: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 20px 6vw; background: rgba(251,243,231,0.85); backdrop-filter: blur(6px); }
+  .logo { font-family: 'Homemade Apple', cursive; font-size: 42px; transform: rotate(-3deg); line-height: 1; }
+  .navlinks { display: flex; align-items: center; gap: 24px; font-size: 15px; font-weight: 500; }
+  .navlinks .btn { background: #4F66FF; color: #FBF3E7; padding: 13px 26px; border-radius: 28px; font-weight: 500; font-size: 15px; }
+
+  .hero-intro { text-align: center; padding: 60px 6vw 0; }
+  .hero-intro .hand { font-family: 'Homemade Apple', cursive; color: #4F66FF; font-size: 30px; transform: rotate(-3deg); display: inline-block; }
+
+  .pin-wrap { position: relative; height: 620vh; }
+  .pin-inner { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .slot { position: absolute; opacity: 0; will-change: transform, opacity; display: flex; align-items: center; gap: 20px; font-family: 'Anton', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; color: #2B241F; font-size: clamp(64px, 12vw, 130px); line-height: 1; backface-visibility: hidden; text-align: center; }
+  .slot.blue { color: #4F66FF; }
+  .slot .chip { width: clamp(90px, 12vw, 130px); height: clamp(90px, 12vw, 130px); border-radius: 18px; border: 4px solid #2B241F; display: inline-block; }
+  .floater { position: absolute; will-change: transform; opacity: 0.9; }
+  .progress-track { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); width: 3px; height: 160px; background: rgba(43,36,31,0.15); z-index: 400; border-radius: 2px; }
+  .progress-fill { width: 100%; background: #4F66FF; border-radius: 2px; height: 0%; }
+
+  .draw path, .draw circle, .draw line, .draw rect, .draw ellipse { stroke-dasharray: 600; stroke-dashoffset: 600; transition: stroke-dashoffset 1.4s ease 0.1s; }
+  .draw.in path, .draw.in circle, .draw.in line, .draw.in rect, .draw.in ellipse { stroke-dashoffset: 0; }
+
+  .marquee { overflow: hidden; background: #2B241F; padding: 16px 0; transform: rotate(-1deg) scale(1.02); margin: 30px 0; }
+  .marquee-track { display: flex; gap: 48px; width: max-content; animation: scrollmarquee 18s linear infinite; }
+  .marquee-track span { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 24px; color: #FBF3E7; white-space: nowrap; }
+  .marquee-track span.blue { color: #4F66FF; }
+  @keyframes scrollmarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  main { max-width: 900px; margin: 0 auto; padding: 0 28px; }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  .tag.two { font-family: 'Homemade Apple', cursive; color: #C98B5C; font-size: 30px; transform: rotate(2deg); margin: 50px 0 10px; display: inline-block; }
+
+  .steps { display: flex; gap: 24px; margin: 30px 0 70px; flex-wrap: wrap; }
+  .step { flex: 1; min-width: 180px; text-align: center; background: #FBF3E7; border: 3px solid #2B241F; border-radius: 22px; padding: 30px 16px; box-shadow: 7px 7px 0 #2B241F; }
+  .step .circle { border-radius: 50%; width: 96px; height: 96px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+  .step .label { font-family: 'Anton', sans-serif; font-size: 19px; text-transform: uppercase; }
+
+  .h-wrap { position: relative; height: 400vh; }
+  .h-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+  .h-title { padding: 0 6vw 34px; }
+  .h-title .hand { font-family: 'Homemade Apple', cursive; font-size: 28px; color: #4F66FF; display: block; transform: rotate(-2deg); margin-bottom: 6px; }
+  .h-title .big { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(44px, 7vw, 72px); line-height: 1; }
+  .h-track { display: flex; gap: 34px; padding: 0 6vw; will-change: transform; }
+  .card { flex: 0 0 auto; width: 320px; background: #FBF3E7; border: 3px solid #2B241F; border-radius: 22px; padding: 18px 18px 24px; box-shadow: 8px 8px 0 #2B241F; }
+  .card .art { border-radius: 14px; height: 230px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border: 3px solid #2B241F; }
+  .card h4 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 26px; margin-bottom: 2px; }
+  .card .price { font-size: 15px; color: #5A5248; }
+  .card .note { font-family: 'Homemade Apple', cursive; font-size: 18px; color: #4F66FF; margin-top: 10px; transform: rotate(-1.5deg); }
+
+  .founder { padding: 120px 6vw; text-align: center; position: relative; }
+  .founder p { font-size: 18px; color: #5A5248; margin-bottom: 12px; }
+  .founder h3 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(52px, 9vw, 96px); line-height: 0.95; }
+  .founder .hand { font-family: 'Homemade Apple', cursive; font-size: 26px; color: #4F66FF; display: inline-block; transform: rotate(-2deg); margin-top: 18px; }
+
+  .cta { background: #4F66FF; border-radius: 28px; padding: 70px 40px; text-align: center; transform: rotate(-0.5deg); margin: 0 6vw 0; position: relative; overflow: hidden; }
+  .cta .headline { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(38px, 6vw, 64px); color: #FBF3E7; margin-bottom: 26px; line-height: 1; }
+  .cta .button { display: inline-block; background: #FBF3E7; color: #2B241F; padding: 18px 44px; border-radius: 34px; font-size: 17px; font-weight: 500; }
+
+  footer { padding: 70px 6vw 30px; background: #2B241F; margin-top: 90px; border-radius: 40px 40px 0 0; }
+  .foot-word { font-family: 'Homemade Apple', cursive; color: #FBF3E7; font-size: clamp(64px, 14vw, 150px); line-height: 1.2; transform: rotate(-3deg); text-align: center; margin-bottom: 40px; }
+  .foot-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; border-top: 1px solid rgba(251,243,231,0.2); padding-top: 26px; }
+  .foot-row .fitem { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #9C9184; }
+  .foot-row .dot { width: 9px; height: 9px; border-radius: 50%; background: #4F66FF; }
+</style>
+</head>
+<body>
+
+  <div id="loader"><div class="word">urlgrey</div><div class="pct" id="pct">0%</div></div>
+  <div id="cursor"></div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <nav>
+    <div class="logo">urlgrey</div>
+    <div class="navlinks">
+      <span class="clickable">the goods</span>
+      <span class="clickable">the drops</span>
+      <div class="btn clickable">order now</div>
+    </div>
+  </nav>
+
+  <div class="hero-intro"><span class="hand">meet urlgrey — scroll on</span></div>
+
+  <div class="pin-wrap" id="pinWrap" data-bg="#FBF3E7">
+    <div class="pin-inner">
+
+      <svg class="floater" data-speed="0.4" data-rot="12" style="top:10%; left:6%;" width="110" height="110" viewBox="0 0 72 72" aria-hidden="true">
+        <circle cx="22" cy="18" r="11" fill="none" stroke="#C98B5C" stroke-width="3"/>
+        <circle cx="50" cy="18" r="11" fill="none" stroke="#C98B5C" stroke-width="3"/>
+        <circle cx="36" cy="42" r="24" fill="none" stroke="#C98B5C" stroke-width="3"/>
+        <circle cx="28" cy="38" r="2.5" fill="#C98B5C"/>
+        <circle cx="44" cy="38" r="2.5" fill="#C98B5C"/>
+        <path d="M28 49 Q36 55 44 49" fill="none" stroke="#C98B5C" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+
+      <svg class="floater" data-speed="0.7" data-rot="-15" style="top:13%; right:8%;" width="86" height="108" viewBox="0 0 56 70" aria-hidden="true">
+        <path d="M10 8 L46 8 L41 62 L15 62 Z" fill="none" stroke="#4F66FF" stroke-width="3" stroke-linejoin="round"/>
+        <line x1="13" y1="24" x2="43" y2="24" stroke="#4F66FF" stroke-width="3"/>
+        <path d="M18 34 Q28 40 38 34" fill="none" stroke="#4F66FF" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+
+      <svg class="floater" data-speed="0.55" data-rot="20" style="bottom:16%; left:9%;" width="100" height="100" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="8" y="14" width="48" height="32" rx="5" fill="none" stroke="#2B241F" stroke-width="3"/>
+        <line x1="22" y1="54" x2="42" y2="54" stroke="#2B241F" stroke-width="3"/>
+        <line x1="32" y1="46" x2="32" y2="54" stroke="#2B241F" stroke-width="3"/>
+        <circle cx="26" cy="28" r="2.5" fill="#2B241F"/>
+        <circle cx="38" cy="28" r="2.5" fill="#2B241F"/>
+        <path d="M26 36 Q32 40 38 36" fill="none" stroke="#2B241F" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+
+      <svg class="floater" data-speed="0.85" data-rot="-25" style="bottom:12%; right:12%;" width="72" height="72" viewBox="0 0 46 46" aria-hidden="true">
+        <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#F2C879" stroke-width="3" stroke-linejoin="round"/>
+      </svg>
+
+      <div class="slot" data-i="0"><span>pop-up</span></div>
+      <div class="slot" data-i="1"><span>cakes</span><span class="chip" style="background:#F2C879;"></span></div>
+      <div class="slot blue" data-i="2"><span>dallas</span></div>
+      <div class="slot" data-i="3"><span>actually craves</span></div>
+      <div class="slot" data-i="4"><span>faster</span><span class="chip" style="background:#C98B5C;"></span></div>
+      <div class="slot" data-i="5"><span>than your timeline</span></div>
+      <div class="slot blue" data-i="6"><span>can scroll</span><span class="chip" style="background:#9C9184;"></span></div>
+
+    </div>
+  </div>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>small batch</span><span class="blue">✳</span><span>no shortcuts</span><span class="blue">✳</span><span>dallas tx</span><span class="blue">✳</span><span>it's a pun, get it?</span><span class="blue">✳</span>
+      <span>small batch</span><span class="blue">✳</span><span>no shortcuts</span><span class="blue">✳</span><span>dallas tx</span><span class="blue">✳</span><span>it's a pun, get it?</span><span class="blue">✳</span>
+    </div>
+  </div>
+
+  <main>
+    <span class="tag two reveal">with urlgrey you can:</span>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="circle" style="background:#F2C879;">
+          <svg class="draw" width="52" height="52" viewBox="0 0 44 44" aria-hidden="true">
+            <rect x="8" y="14" width="28" height="22" rx="3" fill="none" stroke="#2B241F" stroke-width="2.5"/>
+            <path d="M14 14 V8 H30 V14" fill="none" stroke="#2B241F" stroke-width="2.5"/>
+            <path d="M14 22 Q22 27 30 22" fill="none" stroke="#2B241F" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="label">catch the drops</div>
+      </div>
+      <div class="step reveal">
+        <div class="circle" style="background:#C98B5C;">
+          <svg class="draw" width="48" height="52" viewBox="0 0 40 44" aria-hidden="true">
+            <path d="M8 6 L32 6 L28 40 L12 40 Z" fill="none" stroke="#FBF3E7" stroke-width="2.5" stroke-linejoin="round"/>
+            <line x1="10" y1="17" x2="30" y2="17" stroke="#FBF3E7" stroke-width="2.5"/>
+            <path d="M15 26 Q20 30 25 26" fill="none" stroke="#FBF3E7" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="label">order bespoke</div>
+      </div>
+      <div class="step reveal">
+        <div class="circle" style="background:#4F66FF;">
+          <svg class="draw" width="50" height="50" viewBox="0 0 42 42" aria-hidden="true">
+            <rect x="6" y="9" width="30" height="21" rx="3" fill="none" stroke="#FBF3E7" stroke-width="2.5"/>
+            <line x1="15" y1="36" x2="27" y2="36" stroke="#FBF3E7" stroke-width="2.5"/>
+            <line x1="21" y1="30" x2="21" y2="36" stroke="#FBF3E7" stroke-width="2.5"/>
+            <circle cx="16" cy="18" r="2" fill="#FBF3E7"/>
+            <circle cx="26" cy="18" r="2" fill="#FBF3E7"/>
+          </svg>
+        </div>
+        <div class="label">find the pop-up</div>
+      </div>
+    </div>
+  </main>
+
+  <div class="h-wrap" id="hWrap" data-bg="#F2C879">
+    <div class="h-sticky">
+      <div class="h-title">
+        <span class="hand">the usual suspects</span>
+        <span class="big">this week's lineup</span>
+      </div>
+      <div class="h-track" id="hTrack">
+
+        <div class="card" style="transform:rotate(-2deg);">
+          <div class="art" style="background:#4F66FF;">
+            <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
+              <path d="M20 75 Q20 45 55 45 Q90 45 90 75 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M20 75 L90 75 L85 92 L25 92 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M35 45 Q38 30 45 28 M55 44 Q55 26 62 24 M75 45 Q78 32 72 26" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h4>signature bundt</h4>
+          <div class="price">from $28</div>
+          <div class="note">the one that started it</div>
+        </div>
+
+        <div class="card" style="transform:rotate(1.5deg); margin-top:28px;">
+          <div class="art" style="background:#C98B5C;">
+            <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
+              <circle cx="42" cy="48" r="24" fill="none" stroke="#FBF3E7" stroke-width="4"/>
+              <circle cx="35" cy="42" r="2.5" fill="#FBF3E7"/>
+              <circle cx="48" cy="40" r="2.5" fill="#FBF3E7"/>
+              <circle cx="42" cy="53" r="2.5" fill="#FBF3E7"/>
+              <path d="M70 60 L92 60 L90 88 L72 88 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
+              <line x1="72" y1="70" x2="90" y2="70" stroke="#FBF3E7" stroke-width="3"/>
+            </svg>
+          </div>
+          <h4>milk & cookies box</h4>
+          <div class="price">from $22</div>
+          <div class="note">saturday cartoons optional</div>
+        </div>
+
+        <div class="card" style="transform:rotate(-1deg);">
+          <div class="art" style="background:#F2C879;">
+            <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
+              <rect x="25" y="60" width="60" height="28" rx="4" fill="none" stroke="#2B241F" stroke-width="4"/>
+              <rect x="32" y="38" width="46" height="22" rx="4" fill="none" stroke="#2B241F" stroke-width="4"/>
+              <path d="M52 38 Q52 24 58 22 Q60 30 55 38" fill="none" stroke="#2B241F" stroke-width="3.5" stroke-linecap="round"/>
+              <circle cx="55" cy="18" r="4" fill="none" stroke="#2B241F" stroke-width="3"/>
+            </svg>
+          </div>
+          <h4>bespoke cake</h4>
+          <div class="price">custom quote</div>
+          <div class="note">tell me your weird idea</div>
+        </div>
+
+        <div class="card" style="transform:rotate(2deg); margin-top:20px;">
+          <div class="art" style="background:#9C9184;">
+            <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
+              <path d="M30 40 Q30 25 45 25 L65 25 Q80 25 80 40 L80 45 L30 45 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M30 45 L80 45 L75 88 L35 88 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M42 58 Q55 66 68 58" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h4>earl grey latte cake</h4>
+          <div class="price">seasonal drop</div>
+          <div class="note">yes. THE pun.</div>
+        </div>
+
+        <div class="card" style="transform:rotate(-1.5deg); margin-top:12px;">
+          <div class="art" style="background:#2B241F;">
+            <svg width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
+              <text x="55" y="50" text-anchor="middle" fill="#FBF3E7" font-family="Anton, sans-serif" font-size="24">NEXT</text>
+              <text x="55" y="78" text-anchor="middle" fill="#4F66FF" font-family="Anton, sans-serif" font-size="24">DROP?</text>
+            </svg>
+          </div>
+          <h4>you tell me</h4>
+          <div class="price">vote on instagram</div>
+          <div class="note">@urlgreybakery</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="founder" data-bg="#E8B4BC">
+    <svg class="draw reveal" width="120" height="70" viewBox="0 0 90 60" style="margin-bottom:16px;" aria-hidden="true">
+      <path d="M12 35 Q28 8 45 30 Q62 52 78 25" fill="none" stroke="#2B241F" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="12" cy="35" r="5" fill="none" stroke="#2B241F" stroke-width="3"/>
+      <circle cx="78" cy="25" r="5" fill="none" stroke="#2B241F" stroke-width="3"/>
+    </svg>
+    <p class="reveal">urlgrey started with one mum, a stand mixer, and a bad pun:</p>
+    <h3 class="reveal">baking should<br>feel less serious</h3>
+    <span class="hand reveal">— christalyn, probably covered in flour</span>
+  </div>
+
+  <div data-bg="#FBF3E7">
+    <div class="cta reveal">
+      <svg class="floater" data-speed="0.3" data-rot="18" style="top:16px; left:22px;" width="44" height="44" viewBox="0 0 46 46" aria-hidden="true">
+        <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linejoin="round" opacity="0.6"/>
+      </svg>
+      <svg class="floater" data-speed="0.5" data-rot="-14" style="bottom:16px; right:26px;" width="40" height="40" viewBox="0 0 46 46" aria-hidden="true">
+        <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linejoin="round" opacity="0.4"/>
+      </svg>
+      <div class="headline">turn cravings into chaos</div>
+      <div class="button clickable">order now</div>
+    </div>
+
+    <footer>
+      <div class="foot-word">urlgrey</div>
+      <div class="foot-row">
+        <div class="fitem"><span class="dot"></span>dallas, tx</div>
+        <div class="fitem"><span class="dot" style="background:#F2C879;"></span>urlgreybakery@gmail.com</div>
+        <div class="fitem"><span class="dot" style="background:#C98B5C;"></span>@urlgreybakery</div>
+      </div>
+    </footer>
+  </div>
+
+<script>
+  var pctEl = document.getElementById('pct');
+  var loader = document.getElementById('loader');
+  var n = 0;
+  var iv = setInterval(function () {
+    n += Math.ceil(Math.random() * 18);
+    if (n >= 100) { n = 100; clearInterval(iv); }
+    pctEl.textContent = n + '%';
+    if (n === 100) setTimeout(function () { loader.classList.add('hide'); }, 250);
+  }, 120);
+
+  var cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', function (e) {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('.clickable').forEach(function (el) {
+    el.addEventListener('mouseenter', function () { cursor.style.width = '44px'; cursor.style.height = '44px'; cursor.style.background = '#2B241F'; });
+    el.addEventListener('mouseleave', function () { cursor.style.width = '22px'; cursor.style.height = '22px'; cursor.style.background = '#4F66FF'; });
+  });
+
+  function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+  function easeInCubic(x) { return x * x * x; }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  var pinWrap = document.getElementById('pinWrap');
+  var slots = document.querySelectorAll('.slot');
+  var floaters = document.querySelectorAll('.floater');
+  var progressFill = document.getElementById('progressFill');
+  var hWrap = document.getElementById('hWrap');
+  var hTrack = document.getElementById('hTrack');
+  var ticking = false;
+  var bgSections = document.querySelectorAll('[data-bg]');
+
+  function update() {
+    var y = window.scrollY;
+    var vh = window.innerHeight;
+
+    var docH = document.documentElement.scrollHeight - vh;
+    progressFill.style.height = clamp(y / docH, 0, 1) * 100 + '%';
+
+    var rect = pinWrap.getBoundingClientRect();
+    var wrapTop = y + rect.top;
+    var scrollDist = pinWrap.offsetHeight - vh;
+    var progress = clamp((y - wrapTop) / scrollDist, 0, 1);
+    var slotProgress = progress * slots.length;
+    slots.forEach(function (slot, i) {
+      var local = slotProgress - i;
+      var opacity = 0, scale = 0.7, ty = 36;
+      if (local >= -0.15 && local < 1.15) {
+        if (local < 0.2) {
+          var t = easeOutCubic(clamp(local / 0.2, 0, 1));
+          opacity = t; scale = 0.7 + 0.3 * t; ty = 36 * (1 - t);
+        } else if (local < 0.8) {
+          opacity = 1; scale = 1; ty = 0;
+        } else {
+          var t2 = easeInCubic(clamp((local - 0.8) / 0.2, 0, 1));
+          opacity = 1 - t2; scale = 1 + 0.12 * t2; ty = -26 * t2;
+        }
+      }
+      slot.style.opacity = opacity;
+      slot.style.transform = 'translate3d(0,' + ty + 'px,0) scale(' + scale + ')';
+    });
+
+    floaters.forEach(function (f) {
+      var speed = parseFloat(f.getAttribute('data-speed'));
+      var rot = parseFloat(f.getAttribute('data-rot'));
+      f.style.transform = 'translate3d(0,' + (y * speed * -0.08) + 'px,0) rotate(' + (rot + y * 0.01 * (rot > 0 ? 1 : -1)) + 'deg)';
+    });
+
+    var hRect = hWrap.getBoundingClientRect();
+    var hTop = y + hRect.top;
+    var hDist = hWrap.offsetHeight - vh;
+    var hProg = clamp((y - hTop) / hDist, 0, 1);
+    var maxShift = hTrack.scrollWidth - window.innerWidth + window.innerWidth * 0.12;
+    hTrack.style.transform = 'translate3d(' + (-hProg * maxShift) + 'px,0,0)';
+
+    var current = '#FBF3E7';
+    bgSections.forEach(function (sec) {
+      var r = sec.getBoundingClientRect();
+      if (r.top < vh * 0.5 && r.bottom > vh * 0.5) current = sec.getAttribute('data-bg');
+    });
+    document.body.style.background = current;
+
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+  }, { passive: true });
+  update();
+
+  var revealEls = document.querySelectorAll('.reveal, .draw');
+  var seen = 0;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        var delay = (seen % 6) * 60;
+        setTimeout(function () { entry.target.classList.add('in'); }, delay);
+        seen++;
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(function (el) { io.observe(el); });
+</script>
+
+</body>
+</html>
