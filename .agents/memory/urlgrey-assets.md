@@ -13,5 +13,12 @@ description: How to reference attached_assets from the urlgrey artifact's hand-w
 
 **How to apply:** give media elements ids, keep their containers FIXED height (card `.art` = 230px, founder photo = 300px) so async media load causes no reflow — this protects the event-driven zero-lag scroll loop whose geometry is cached in `measure()`.
 
+# Smooth transform-driven media galleries
+The zero-lag scroll uses horizontal tracks translated via CSS transform on vertical scroll (metrics cached in `measure()`, writes gated on change in a single rAF `frame()`). To add another such section, mirror the existing track's metric+shift pattern — don't add layout reads inside `frame()`.
+
+For video reels inside a transform-driven / sticky+overflow-hidden track: IntersectionObserver DOES respect post-transform geometry, so use one IO to (a) lazy-set each video `.src` only on first near-viewport intersect (`rootMargin` ~200px) and (b) play/pause by visibility. This keeps many videos from all buffering at once — the main smoothness lever. Skip autoplay under `prefers-reduced-motion`.
+
+Planet parallax trick: put the JS floater parallax transform on the OUTER `.floater`, and a continuous CSS keyframe (bob/rotate) on the INNER `<img>`, so the two transforms compose without clobbering each other.
+
 # Fonts / direction
 Keep template fonts: Anton (display) / Homemade Apple (accents) / Poppins (body). Do NOT switch to Fredoka — user chose "follow the template, not the moodboard."

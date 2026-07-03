@@ -87,6 +87,25 @@
   .art video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .founder-photo { width: min(340px, 78vw); height: 300px; object-fit: cover; border: 3px solid #2B241F; border-radius: 22px; box-shadow: 8px 8px 0 #2B241F; margin: 0 auto 30px; display: block; transform: rotate(-1.5deg); background: #E8B4BC; }
 
+  /* first-scroll cookie planets */
+  .floater.planet { width: clamp(150px, 20vw, 300px); height: auto; opacity: 1; }
+  .planet-img { display: block; width: 100%; height: auto; filter: drop-shadow(0 20px 34px rgba(43,36,31,0.28)); animation: planetBob 7s ease-in-out infinite; }
+  .planet.p2 .planet-img { animation-duration: 9.5s; animation-delay: -3s; }
+  @keyframes planetBob { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-14px) rotate(3.5deg); } }
+
+  /* video reel section */
+  .v-wrap { position: relative; height: 460vh; }
+  .v-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; background: #2B241F; }
+  .v-title { padding: 0 6vw 30px; }
+  .v-title .hand { font-family: 'Homemade Apple', cursive; font-size: 28px; color: #F2C879; display: block; transform: rotate(-2deg); margin-bottom: 6px; }
+  .v-title .big { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(44px, 7vw, 72px); line-height: 1; color: #FBF3E7; }
+  .v-track { display: flex; gap: 30px; padding: 0 6vw; will-change: transform; align-items: center; }
+  .reel { position: relative; flex: 0 0 auto; width: clamp(200px, 44vw, 250px); aspect-ratio: 9 / 16; border-radius: 24px; border: 3px solid #FBF3E7; overflow: hidden; background: #000; box-shadow: 8px 8px 0 #4F66FF; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s ease; }
+  .reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .reel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(43,36,31,0.55), rgba(43,36,31,0) 42%); pointer-events: none; }
+  .reel-cap { position: absolute; left: 16px; bottom: 14px; z-index: 2; font-family: 'Homemade Apple', cursive; font-size: 17px; color: #FBF3E7; text-shadow: 0 2px 8px rgba(0,0,0,0.5); transform: rotate(-2deg); }
+  .reel:hover { transform: translateY(-10px) scale(1.04) rotate(0deg) !important; box-shadow: 12px 14px 0 #F2C879; }
+
   .founder { padding: 120px 6vw; text-align: center; position: relative; }
   .founder p { font-size: 18px; color: #5A5248; margin-bottom: 12px; }
   .founder h3 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(52px, 9vw, 96px); line-height: 0.95; }
@@ -114,6 +133,7 @@
   @media (prefers-reduced-motion: reduce) {
     #loader .word, .scroll-hint { animation: none; }
     .reveal { opacity: 1; transform: none; }
+    .planet-img { animation: none; }
   }
 </style>
 </head>
@@ -170,6 +190,13 @@
       <svg class="floater" data-speed="0.85" data-rot="-25" data-mouse="-2.6" style="bottom:12%; right:12%;" width="72" height="72" viewBox="0 0 46 46" aria-hidden="true">
         <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#F2C879" stroke-width="3" stroke-linejoin="round"/>
       </svg>
+
+      <div class="floater planet p1" data-speed="1.35" data-rot="6" data-mouse="1.1" style="top:9%; right:5%;">
+        <img id="planet-artemis" class="planet-img" alt="Artemis II — a dark chocolate cookie planet with a white chocolate star">
+      </div>
+      <div class="floater planet p2" data-speed="0.85" data-rot="-8" data-mouse="1.6" style="bottom:8%; left:4%;">
+        <img id="planet-mother" class="planet-img" alt="The mother urth bar — a golden cookie shaped like a globe">
+      </div>
 
       <div class="slot" data-i="0"><span>pop-up</span></div>
       <div class="slot" data-i="1"><span>cakes</span><span class="chip" style="background:#F2C879;"></span></div>
@@ -284,6 +311,49 @@
           <div class="note">@urlgreybakery</div>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+  <div class="v-wrap" id="vWrap" data-bg="#2B241F">
+    <div class="v-sticky">
+      <div class="v-title">
+        <span class="hand">now showing</span>
+        <span class="big">urlgrey in motion</span>
+      </div>
+      <div class="v-track" id="vTrack">
+        <div class="reel clickable" data-label="play" data-href="https://www.instagram.com/urlgreybakery/" style="transform:rotate(-3deg);">
+          <video id="vid-r1" muted loop playsinline preload="metadata"></video>
+          <span class="reel-cap">fresh out the oven</span>
+        </div>
+        <div class="reel clickable" data-label="play" data-href="https://www.instagram.com/urlgreybakery/" style="transform:rotate(2deg);">
+          <video id="vid-r2" muted loop playsinline preload="metadata"></video>
+          <span class="reel-cap">small batch magic</span>
+        </div>
+        <div class="reel clickable" data-label="play" data-href="https://www.instagram.com/urlgreybakery/" style="transform:rotate(-2deg);">
+          <video id="vid-r3" muted loop playsinline preload="metadata"></video>
+          <span class="reel-cap">the drop just dropped</span>
+        </div>
+        <div class="reel clickable" data-label="play" data-href="https://www.instagram.com/urlgreybakery/" style="transform:rotate(3deg);">
+          <video id="vid-r4" muted loop playsinline preload="metadata"></video>
+          <span class="reel-cap">behind the counter</span>
+        </div>
+        <div class="reel clickable" data-label="play" data-href="https://www.instagram.com/urlgreybakery/" style="transform:rotate(-1.5deg);">
+          <video id="vid-r5" muted loop playsinline preload="metadata"></video>
+          <span class="reel-cap">matcha o'clock</span>
+        </div>
+        <div class="reel clickable" data-label="play" data-href="https://www.instagram.com/urlgreybakery/" style="transform:rotate(2.5deg);">
+          <video id="vid-r6" muted loop playsinline preload="metadata"></video>
+          <span class="reel-cap">sprinkle season</span>
+        </div>
+        <div class="reel clickable" data-label="play" data-href="https://www.instagram.com/urlgreybakery/" style="transform:rotate(-2.5deg);">
+          <video id="vid-r7" muted loop playsinline preload="metadata"></video>
+          <span class="reel-cap">pop-up prep</span>
+        </div>
+        <div class="reel clickable" data-label="play" data-href="https://www.instagram.com/urlgreybakery/" style="transform:rotate(1.5deg);">
+          <video id="vid-r8" muted loop playsinline preload="metadata"></video>
+          <span class="reel-cap">certified urth day</span>
+        </div>
       </div>
     </div>
   </div>
@@ -466,6 +536,8 @@
   var progressFill = document.getElementById('progressFill');
   var hWrap = document.getElementById('hWrap');
   var hTrack = document.getElementById('hTrack');
+  var vWrap = document.getElementById('vWrap');
+  var vTrack = document.getElementById('vTrack');
   var bgSections = document.querySelectorAll('[data-bg]');
   var footWord = document.querySelector('.foot-word');
   var marqueeTrack = document.getElementById('marqueeTrack');
@@ -485,6 +557,7 @@
   /* ---------- cached layout metrics (recomputed only on resize/load) ---------- */
   var vhG = window.innerHeight, wwG = window.innerWidth;
   var pinTop = 0, pinDist = 1, hTopG = 0, hDist = 1, maxShift = 0, docH = 1, marqHalf = 0;
+  var vTopG = 0, vDist = 1, maxShiftV = 0;
   var marqTop = 0, marqH = 0, footTop = 1e9, footH = 0;
   var secData = [];
   function absTop(el) { return el.getBoundingClientRect().top + window.scrollY; }
@@ -493,6 +566,8 @@
     pinTop = absTop(pinWrap); pinDist = Math.max(1, pinWrap.offsetHeight - vhG);
     hTopG = absTop(hWrap); hDist = Math.max(1, hWrap.offsetHeight - vhG);
     maxShift = Math.max(0, hTrack.scrollWidth - wwG + wwG * 0.12);
+    vTopG = absTop(vWrap); vDist = Math.max(1, vWrap.offsetHeight - vhG);
+    maxShiftV = Math.max(0, vTrack.scrollWidth - wwG + wwG * 0.12);
     docH = Math.max(1, document.documentElement.scrollHeight - vhG);
     marqHalf = marqueeTrack.scrollWidth / 2;
     marqTop = absTop(marqueeTrack); marqH = marqueeTrack.offsetHeight;
@@ -517,7 +592,7 @@
   var lastBg = '';
   var lastT = performance.now();
   var lastY = -1, pmx = -99999, pmy = -99999;
-  var lastPct = -1, lastHShift = -99999;
+  var lastPct = -1, lastHShift = -99999, lastVShift = -99999;
   var marqVisible = false, footVisible = false;
 
   function frame(now) {
@@ -599,6 +674,13 @@
         lastHShift = hShift;
       }
 
+      /* horizontal video reel track */
+      var vShift = Math.round(-clamp((y - vTopG) / vDist, 0, 1) * maxShiftV * 10) / 10;
+      if (vShift !== lastVShift) {
+        vTrack.style.transform = 'translate3d(' + vShift + 'px,0,0)';
+        lastVShift = vShift;
+      }
+
       /* visibility flags for the continuous animations */
       marqVisible = (marqTop < y + vhG) && (marqTop + marqH > y);
       footVisible = (footTop < y + vhG) && (footTop + footH > y);
@@ -669,6 +751,16 @@
   import terrain from '@assets/657358127_18073132688700793_2963463959411122910_n_1783081514899.jpg';
   import founder from '@assets/730045704_18082087358700793_9092790293979277822_n_1783081514900.jpg';
   import drop from '@assets/SaveClip.App_AQOl3woqnNw5oIxxwFk2_qF1iVmYqRG4KG4lFwgR34zjSqtLk_1783081573772.mp4';
+  import planetA from '@assets/artemis-planet.png';
+  import planetB from '@assets/image_1783101557653.png';
+  import r1 from '@assets/SaveClip.App_AQM2Pcd9dOmzDkVIkH8A8butAt0UZPtEQs-F1q__8Omr_G8Lo_1783081514900.mp4';
+  import r2 from '@assets/SaveClip.App_AQMA53hX5_dWcvaWMTqHaZGDN668Ui_qcKrJvR9MtVFv9e5Lz_1783081514900.mp4';
+  import r3 from '@assets/SaveClip.App_AQMruMCW3wJ1wDsFKwSwpgnYjaPKO58fWT1VaPysBDuR4LlAm_1783081514900.mp4';
+  import r4 from '@assets/SaveClip.App_AQMV6Wt2L4CpqkkZLdWJGRlvmrP28Cw5bZD6UEiyit7ouzYeu_1783081514900.mp4';
+  import r5 from '@assets/SaveClip.App_AQNBIxzrt-Wa9LKf1zWJPe57bWUmo5PgvozbKvRz-z8cUpn8__1783081514900.mp4';
+  import r6 from '@assets/SaveClip.App_AQNFzEEVUgka6J4mngO7KsS09R7rP0xov5RB-uZSbnAmOOC5R_1783081514900.mp4';
+  import r7 from '@assets/SaveClip.App_AQNOi_-XvY7P3765OrFfjLcemn7O4Z77evGmKvSjfBxFvt92c_1783081514900.mp4';
+  import r8 from '@assets/SaveClip.App_AQP0SbjhMSUH_DE-6dl6oUFtwfHzs6AslNemGfTIJ0-PlwE3Q_1783081573772.mp4';
 
   function set(id, src) { var e = document.getElementById(id); if (e) e.src = src; }
   set('img-artemis', artemis);
@@ -680,6 +772,28 @@
 
   var v = document.getElementById('vid-drop');
   if (v) { v.src = drop; v.load(); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+
+  set('planet-artemis', planetA);
+  set('planet-mother', planetB);
+
+  var reelMap = { 'vid-r1': r1, 'vid-r2': r2, 'vid-r3': r3, 'vid-r4': r4, 'vid-r5': r5, 'vid-r6': r6, 'vid-r7': r7, 'vid-r8': r8 };
+  var reduceReels = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var reelVideos = document.querySelectorAll('.reel video');
+  function ensureReelSrc(vid) { if (!vid.getAttribute('src') && reelMap[vid.id]) { vid.src = reelMap[vid.id]; vid.load(); } }
+  function playReel(vid) { if (reduceReels) return; var rp = vid.play(); if (rp && rp.catch) rp.catch(function () {}); }
+
+  if ('IntersectionObserver' in window) {
+    var vio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var vid = en.target;
+        if (en.isIntersecting) { ensureReelSrc(vid); playReel(vid); }
+        else { vid.pause(); }
+      });
+    }, { threshold: 0.2, rootMargin: '200px 0px' });
+    reelVideos.forEach(function (vid) { vio.observe(vid); });
+  } else {
+    reelVideos.forEach(function (vid) { ensureReelSrc(vid); playReel(vid); });
+  }
 </script>
 
 </body>
