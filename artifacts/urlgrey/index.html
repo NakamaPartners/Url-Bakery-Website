@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>urlgrey</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Homemade+Apple&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -11,19 +12,31 @@
   a, .clickable { cursor: none; }
 
   #loader { position: fixed; inset: 0; background: #2B241F; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; transition: opacity 0.6s ease, visibility 0.6s ease; }
-  #loader .word { font-family: 'Homemade Apple', cursive; color: #FBF3E7; font-size: 64px; transform: rotate(-3deg); }
+  #loader .word { font-family: 'Homemade Apple', cursive; color: #FBF3E7; font-size: 64px; transform: rotate(-3deg); animation: loaderWobble 2.4s ease-in-out infinite; }
   #loader .pct { color: #4F66FF; font-size: 15px; margin-top: 16px; }
   #loader.hide { opacity: 0; visibility: hidden; }
+  @keyframes loaderWobble { 0%,100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(-1deg) translateY(-6px); } }
 
-  #cursor { position: fixed; top: 0; left: 0; width: 22px; height: 22px; border-radius: 50%; background: #4F66FF; opacity: 0.85; pointer-events: none; z-index: 1000; transform: translate3d(-50%,-50%,0); transition: width 0.15s ease, height 0.15s ease, background 0.15s ease; }
+  #cursor { position: fixed; top: 0; left: 0; width: 22px; height: 22px; border-radius: 50%; background: #4F66FF; opacity: 0.9; pointer-events: none; z-index: 1001; transform: translate3d(-50%,-50%,0); transition: width 0.18s ease, height 0.18s ease, background 0.18s ease; display: flex; align-items: center; justify-content: center; }
+  #cursor .clabel { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; color: #FBF3E7; opacity: 0; transform: scale(0.6); transition: opacity 0.15s ease, transform 0.15s ease; pointer-events: none; }
+  #cursor.big { width: 74px; height: 74px; background: #2B241F; }
+  #cursor.big .clabel { opacity: 1; transform: scale(1); }
+  #cursorRing { position: fixed; top: 0; left: 0; width: 46px; height: 46px; border: 2px solid rgba(79,102,255,0.5); border-radius: 50%; pointer-events: none; z-index: 1000; transform: translate3d(-50%,-50%,0); }
 
   nav { position: sticky; top: 0; z-index: 500; display: flex; align-items: center; justify-content: space-between; padding: 20px 6vw; background: rgba(251,243,231,0.85); backdrop-filter: blur(6px); }
-  .logo { font-family: 'Homemade Apple', cursive; font-size: 42px; transform: rotate(-3deg); line-height: 1; }
+  .logo { font-family: 'Homemade Apple', cursive; font-size: 42px; transform: rotate(-3deg); line-height: 1; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); display: inline-block; }
+  .logo:hover { transform: rotate(2deg) scale(1.06); }
   .navlinks { display: flex; align-items: center; gap: 24px; font-size: 15px; font-weight: 500; }
-  .navlinks .btn { background: #4F66FF; color: #FBF3E7; padding: 13px 26px; border-radius: 28px; font-weight: 500; font-size: 15px; }
+  .navlinks .clickable { position: relative; transition: color 0.2s ease; }
+  .navlinks span.clickable::after { content: ''; position: absolute; left: 0; bottom: -4px; width: 100%; height: 2px; background: #4F66FF; transform: scaleX(0); transform-origin: left; transition: transform 0.28s ease; }
+  .navlinks span.clickable:hover::after { transform: scaleX(1); }
+  .navlinks .btn { background: #4F66FF; color: #FBF3E7; padding: 13px 26px; border-radius: 28px; font-weight: 500; font-size: 15px; will-change: transform; transition: box-shadow 0.2s ease; }
+  .navlinks .btn:hover { box-shadow: 0 8px 22px rgba(79,102,255,0.4); }
 
   .hero-intro { text-align: center; padding: 60px 6vw 0; }
   .hero-intro .hand { font-family: 'Homemade Apple', cursive; color: #4F66FF; font-size: 30px; transform: rotate(-3deg); display: inline-block; }
+  .scroll-hint { display: block; margin: 22px auto 0; width: 30px; height: 30px; animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
 
   .pin-wrap { position: relative; height: 620vh; }
   .pin-inner { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
@@ -37,11 +50,12 @@
   .draw path, .draw circle, .draw line, .draw rect, .draw ellipse { stroke-dasharray: 600; stroke-dashoffset: 600; transition: stroke-dashoffset 1.4s ease 0.1s; }
   .draw.in path, .draw.in circle, .draw.in line, .draw.in rect, .draw.in ellipse { stroke-dashoffset: 0; }
 
+  .connector { display: flex; justify-content: center; margin: 6px 0 -6px; }
+
   .marquee { overflow: hidden; background: #2B241F; padding: 16px 0; transform: rotate(-1deg) scale(1.02); margin: 30px 0; }
-  .marquee-track { display: flex; gap: 48px; width: max-content; animation: scrollmarquee 18s linear infinite; }
+  .marquee-track { display: flex; gap: 48px; width: max-content; will-change: transform; }
   .marquee-track span { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 24px; color: #FBF3E7; white-space: nowrap; }
   .marquee-track span.blue { color: #4F66FF; }
-  @keyframes scrollmarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
   main { max-width: 900px; margin: 0 auto; padding: 0 28px; }
 
@@ -51,8 +65,10 @@
   .tag.two { font-family: 'Homemade Apple', cursive; color: #C98B5C; font-size: 30px; transform: rotate(2deg); margin: 50px 0 10px; display: inline-block; }
 
   .steps { display: flex; gap: 24px; margin: 30px 0 70px; flex-wrap: wrap; }
-  .step { flex: 1; min-width: 180px; text-align: center; background: #FBF3E7; border: 3px solid #2B241F; border-radius: 22px; padding: 30px 16px; box-shadow: 7px 7px 0 #2B241F; }
-  .step .circle { border-radius: 50%; width: 96px; height: 96px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+  .step { flex: 1; min-width: 180px; text-align: center; background: #FBF3E7; border: 3px solid #2B241F; border-radius: 22px; padding: 30px 16px; box-shadow: 7px 7px 0 #2B241F; transition: transform 0.28s cubic-bezier(.34,1.56,.64,1), box-shadow 0.28s ease; }
+  .step:hover { transform: translateY(-8px) rotate(-1.5deg); box-shadow: 11px 13px 0 #2B241F; }
+  .step .circle { border-radius: 50%; width: 96px; height: 96px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); }
+  .step:hover .circle { transform: rotate(12deg) scale(1.08); }
   .step .label { font-family: 'Anton', sans-serif; font-size: 19px; text-transform: uppercase; }
 
   .h-wrap { position: relative; height: 400vh; }
@@ -61,32 +77,49 @@
   .h-title .hand { font-family: 'Homemade Apple', cursive; font-size: 28px; color: #4F66FF; display: block; transform: rotate(-2deg); margin-bottom: 6px; }
   .h-title .big { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(44px, 7vw, 72px); line-height: 1; }
   .h-track { display: flex; gap: 34px; padding: 0 6vw; will-change: transform; }
-  .card { flex: 0 0 auto; width: 320px; background: #FBF3E7; border: 3px solid #2B241F; border-radius: 22px; padding: 18px 18px 24px; box-shadow: 8px 8px 0 #2B241F; }
-  .card .art { border-radius: 14px; height: 230px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border: 3px solid #2B241F; }
+  .card { flex: 0 0 auto; width: 320px; background: #FBF3E7; border: 3px solid #2B241F; border-radius: 22px; padding: 18px 18px 24px; box-shadow: 8px 8px 0 #2B241F; will-change: transform; transition: box-shadow 0.25s ease; }
+  .card .art { border-radius: 14px; height: 230px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; border: 3px solid #2B241F; overflow: hidden; }
   .card h4 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: 26px; margin-bottom: 2px; }
   .card .price { font-size: 15px; color: #5A5248; }
-  .card .note { font-family: 'Homemade Apple', cursive; font-size: 18px; color: #4F66FF; margin-top: 10px; transform: rotate(-1.5deg); }
+  .card .note { font-family: 'Homemade Apple', cursive; font-size: 18px; color: #4F66FF; margin-top: 10px; transform: rotate(-1.5deg); transition: transform 0.3s ease; display: inline-block; }
+  .card:hover .note { transform: rotate(2deg) translateX(6px); }
 
   .founder { padding: 120px 6vw; text-align: center; position: relative; }
   .founder p { font-size: 18px; color: #5A5248; margin-bottom: 12px; }
   .founder h3 { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(52px, 9vw, 96px); line-height: 0.95; }
+  .founder .hl { position: relative; display: inline-block; color: #4F66FF; }
+  .founder .hl-draw { position: absolute; left: -8%; top: -14%; width: 116%; height: 128%; overflow: visible; pointer-events: none; }
   .founder .hand { font-family: 'Homemade Apple', cursive; font-size: 26px; color: #4F66FF; display: inline-block; transform: rotate(-2deg); margin-top: 18px; }
 
   .cta { background: #4F66FF; border-radius: 28px; padding: 70px 40px; text-align: center; transform: rotate(-0.5deg); margin: 0 6vw 0; position: relative; overflow: hidden; }
   .cta .headline { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(38px, 6vw, 64px); color: #FBF3E7; margin-bottom: 26px; line-height: 1; }
-  .cta .button { display: inline-block; background: #FBF3E7; color: #2B241F; padding: 18px 44px; border-radius: 34px; font-size: 17px; font-weight: 500; }
+  .cta .button { display: inline-block; background: #FBF3E7; color: #2B241F; padding: 18px 44px; border-radius: 34px; font-size: 17px; font-weight: 500; will-change: transform; transition: box-shadow 0.2s ease; }
+  .cta .button:hover { box-shadow: 0 10px 26px rgba(43,36,31,0.35); }
 
-  footer { padding: 70px 6vw 30px; background: #2B241F; margin-top: 90px; border-radius: 40px 40px 0 0; }
-  .foot-word { font-family: 'Homemade Apple', cursive; color: #FBF3E7; font-size: clamp(64px, 14vw, 150px); line-height: 1.2; transform: rotate(-3deg); text-align: center; margin-bottom: 40px; }
-  .foot-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; border-top: 1px solid rgba(251,243,231,0.2); padding-top: 26px; }
+  footer { padding: 90px 6vw 30px; background: #2B241F; margin-top: 90px; border-radius: 40px 40px 0 0; position: relative; overflow: hidden; }
+  .foot-curve { position: absolute; top: -60%; left: 50%; transform: translateX(-50%); width: 130%; height: 150%; background: radial-gradient(ellipse at 50% 100%, rgba(79,102,255,0.28) 0%, rgba(79,102,255,0) 60%); pointer-events: none; }
+  .foot-word { position: relative; font-family: 'Homemade Apple', cursive; color: #FBF3E7; font-size: clamp(64px, 14vw, 150px); line-height: 1.2; transform: rotate(-3deg); text-align: center; margin-bottom: 40px; will-change: transform; }
+  .foot-row { position: relative; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; border-top: 1px solid rgba(251,243,231,0.2); padding-top: 26px; }
   .foot-row .fitem { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #9C9184; }
   .foot-row .dot { width: 9px; height: 9px; border-radius: 50%; background: #4F66FF; }
+
+  .sprinkle { position: fixed; width: 12px; height: 12px; border-radius: 3px; z-index: 1002; pointer-events: none; will-change: transform, opacity; }
+
+  @media (hover: none), (pointer: coarse) {
+    html, body, a, .clickable { cursor: auto; }
+    #cursor, #cursorRing { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #loader .word, .scroll-hint { animation: none; }
+    .reveal { opacity: 1; transform: none; }
+  }
 </style>
 </head>
 <body>
 
   <div id="loader"><div class="word">urlgrey</div><div class="pct" id="pct">0%</div></div>
-  <div id="cursor"></div>
+  <div id="cursor"><span class="clabel" id="clabel">yum</span></div>
+  <div id="cursorRing"></div>
   <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
 
   <nav>
@@ -94,16 +127,21 @@
     <div class="navlinks">
       <span class="clickable">the goods</span>
       <span class="clickable">the drops</span>
-      <div class="btn clickable">order now</div>
+      <div class="btn clickable magnetic" data-label="tap">order now</div>
     </div>
   </nav>
 
-  <div class="hero-intro"><span class="hand">meet urlgrey — scroll on</span></div>
+  <div class="hero-intro">
+    <span class="hand">meet urlgrey — scroll on</span>
+    <svg class="scroll-hint" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3 V19 M5 13 L12 20 L19 13" fill="none" stroke="#4F66FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
 
   <div class="pin-wrap" id="pinWrap" data-bg="#FBF3E7">
     <div class="pin-inner">
 
-      <svg class="floater" data-speed="0.4" data-rot="12" style="top:10%; left:6%;" width="110" height="110" viewBox="0 0 72 72" aria-hidden="true">
+      <svg class="floater" data-speed="0.4" data-rot="12" data-mouse="1.4" style="top:10%; left:6%;" width="110" height="110" viewBox="0 0 72 72" aria-hidden="true">
         <circle cx="22" cy="18" r="11" fill="none" stroke="#C98B5C" stroke-width="3"/>
         <circle cx="50" cy="18" r="11" fill="none" stroke="#C98B5C" stroke-width="3"/>
         <circle cx="36" cy="42" r="24" fill="none" stroke="#C98B5C" stroke-width="3"/>
@@ -112,13 +150,13 @@
         <path d="M28 49 Q36 55 44 49" fill="none" stroke="#C98B5C" stroke-width="3" stroke-linecap="round"/>
       </svg>
 
-      <svg class="floater" data-speed="0.7" data-rot="-15" style="top:13%; right:8%;" width="86" height="108" viewBox="0 0 56 70" aria-hidden="true">
+      <svg class="floater" data-speed="0.7" data-rot="-15" data-mouse="-2.2" style="top:13%; right:8%;" width="86" height="108" viewBox="0 0 56 70" aria-hidden="true">
         <path d="M10 8 L46 8 L41 62 L15 62 Z" fill="none" stroke="#4F66FF" stroke-width="3" stroke-linejoin="round"/>
         <line x1="13" y1="24" x2="43" y2="24" stroke="#4F66FF" stroke-width="3"/>
         <path d="M18 34 Q28 40 38 34" fill="none" stroke="#4F66FF" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
       </svg>
 
-      <svg class="floater" data-speed="0.55" data-rot="20" style="bottom:16%; left:9%;" width="100" height="100" viewBox="0 0 64 64" aria-hidden="true">
+      <svg class="floater" data-speed="0.55" data-rot="20" data-mouse="1.8" style="bottom:16%; left:9%;" width="100" height="100" viewBox="0 0 64 64" aria-hidden="true">
         <rect x="8" y="14" width="48" height="32" rx="5" fill="none" stroke="#2B241F" stroke-width="3"/>
         <line x1="22" y1="54" x2="42" y2="54" stroke="#2B241F" stroke-width="3"/>
         <line x1="32" y1="46" x2="32" y2="54" stroke="#2B241F" stroke-width="3"/>
@@ -127,7 +165,7 @@
         <path d="M26 36 Q32 40 38 36" fill="none" stroke="#2B241F" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
 
-      <svg class="floater" data-speed="0.85" data-rot="-25" style="bottom:12%; right:12%;" width="72" height="72" viewBox="0 0 46 46" aria-hidden="true">
+      <svg class="floater" data-speed="0.85" data-rot="-25" data-mouse="-2.6" style="bottom:12%; right:12%;" width="72" height="72" viewBox="0 0 46 46" aria-hidden="true">
         <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#F2C879" stroke-width="3" stroke-linejoin="round"/>
       </svg>
 
@@ -143,7 +181,7 @@
   </div>
 
   <div class="marquee" aria-hidden="true">
-    <div class="marquee-track">
+    <div class="marquee-track" id="marqueeTrack">
       <span>small batch</span><span class="blue">✳</span><span>no shortcuts</span><span class="blue">✳</span><span>dallas tx</span><span class="blue">✳</span><span>it's a pun, get it?</span><span class="blue">✳</span>
       <span>small batch</span><span class="blue">✳</span><span>no shortcuts</span><span class="blue">✳</span><span>dallas tx</span><span class="blue">✳</span><span>it's a pun, get it?</span><span class="blue">✳</span>
     </div>
@@ -152,8 +190,14 @@
   <main>
     <span class="tag two reveal">with urlgrey you can:</span>
 
+    <div class="connector" aria-hidden="true">
+      <svg class="draw" width="220" height="46" viewBox="0 0 220 46">
+        <path d="M6 34 Q40 6 74 26 Q108 46 142 20 Q176 -2 214 24" fill="none" stroke="#C98B5C" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+
     <div class="steps">
-      <div class="step reveal">
+      <div class="step reveal clickable" data-label="ooh">
         <div class="circle" style="background:#F2C879;">
           <svg class="draw" width="52" height="52" viewBox="0 0 44 44" aria-hidden="true">
             <rect x="8" y="14" width="28" height="22" rx="3" fill="none" stroke="#2B241F" stroke-width="2.5"/>
@@ -163,7 +207,7 @@
         </div>
         <div class="label">catch the drops</div>
       </div>
-      <div class="step reveal">
+      <div class="step reveal clickable" data-label="ooh">
         <div class="circle" style="background:#C98B5C;">
           <svg class="draw" width="48" height="52" viewBox="0 0 40 44" aria-hidden="true">
             <path d="M8 6 L32 6 L28 40 L12 40 Z" fill="none" stroke="#FBF3E7" stroke-width="2.5" stroke-linejoin="round"/>
@@ -173,7 +217,7 @@
         </div>
         <div class="label">order bespoke</div>
       </div>
-      <div class="step reveal">
+      <div class="step reveal clickable" data-label="ooh">
         <div class="circle" style="background:#4F66FF;">
           <svg class="draw" width="50" height="50" viewBox="0 0 42 42" aria-hidden="true">
             <rect x="6" y="9" width="30" height="21" rx="3" fill="none" stroke="#FBF3E7" stroke-width="2.5"/>
@@ -196,7 +240,7 @@
       </div>
       <div class="h-track" id="hTrack">
 
-        <div class="card" style="transform:rotate(-2deg);">
+        <div class="card clickable" data-rot="-2" data-label="yum">
           <div class="art" style="background:#4F66FF;">
             <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
               <path d="M20 75 Q20 45 55 45 Q90 45 90 75 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
@@ -209,7 +253,7 @@
           <div class="note">the one that started it</div>
         </div>
 
-        <div class="card" style="transform:rotate(1.5deg); margin-top:28px;">
+        <div class="card clickable" data-rot="1.5" style="margin-top:28px;" data-label="yum">
           <div class="art" style="background:#C98B5C;">
             <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
               <circle cx="42" cy="48" r="24" fill="none" stroke="#FBF3E7" stroke-width="4"/>
@@ -225,7 +269,7 @@
           <div class="note">saturday cartoons optional</div>
         </div>
 
-        <div class="card" style="transform:rotate(-1deg);">
+        <div class="card clickable" data-rot="-1" data-label="yum">
           <div class="art" style="background:#F2C879;">
             <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
               <rect x="25" y="60" width="60" height="28" rx="4" fill="none" stroke="#2B241F" stroke-width="4"/>
@@ -239,7 +283,7 @@
           <div class="note">tell me your weird idea</div>
         </div>
 
-        <div class="card" style="transform:rotate(2deg); margin-top:20px;">
+        <div class="card clickable" data-rot="2" style="margin-top:20px;" data-label="yum">
           <div class="art" style="background:#9C9184;">
             <svg class="draw" width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
               <path d="M30 40 Q30 25 45 25 L65 25 Q80 25 80 40 L80 45 L30 45 Z" fill="none" stroke="#FBF3E7" stroke-width="4" stroke-linejoin="round"/>
@@ -252,7 +296,7 @@
           <div class="note">yes. THE pun.</div>
         </div>
 
-        <div class="card" style="transform:rotate(-1.5deg); margin-top:12px;">
+        <div class="card clickable" data-rot="-1.5" style="margin-top:12px;" data-label="vote">
           <div class="art" style="background:#2B241F;">
             <svg width="140" height="140" viewBox="0 0 110 110" aria-hidden="true">
               <text x="55" y="50" text-anchor="middle" fill="#FBF3E7" font-family="Anton, sans-serif" font-size="24">NEXT</text>
@@ -275,23 +319,30 @@
       <circle cx="78" cy="25" r="5" fill="none" stroke="#2B241F" stroke-width="3"/>
     </svg>
     <p class="reveal">urlgrey started with one mum, a stand mixer, and a bad pun:</p>
-    <h3 class="reveal">baking should<br>feel less serious</h3>
+    <h3 class="reveal">baking should<br>feel <span class="hl">less serious<svg class="hl-draw draw" viewBox="0 0 300 90" preserveAspectRatio="none" aria-hidden="true"><path d="M14 62 Q80 84 150 70 Q232 54 288 66 Q262 80 150 84 Q60 86 20 74" fill="none" stroke="#4F66FF" stroke-width="5" stroke-linecap="round"/></svg></span></h3>
     <span class="hand reveal">— christalyn, probably covered in flour</span>
   </div>
 
   <div data-bg="#FBF3E7">
+    <div class="connector reveal" aria-hidden="true">
+      <svg class="draw" width="240" height="50" viewBox="0 0 240 50">
+        <path d="M8 22 Q46 48 90 24 Q134 0 176 26 Q210 46 232 22" fill="none" stroke="#4F66FF" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+
     <div class="cta reveal">
-      <svg class="floater" data-speed="0.3" data-rot="18" style="top:16px; left:22px;" width="44" height="44" viewBox="0 0 46 46" aria-hidden="true">
+      <svg class="floater" data-speed="0.3" data-rot="18" data-mouse="1.6" style="top:16px; left:22px;" width="44" height="44" viewBox="0 0 46 46" aria-hidden="true">
         <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linejoin="round" opacity="0.6"/>
       </svg>
-      <svg class="floater" data-speed="0.5" data-rot="-14" style="bottom:16px; right:26px;" width="40" height="40" viewBox="0 0 46 46" aria-hidden="true">
+      <svg class="floater" data-speed="0.5" data-rot="-14" data-mouse="-1.9" style="bottom:16px; right:26px;" width="40" height="40" viewBox="0 0 46 46" aria-hidden="true">
         <path d="M23 4 L27 17 L41 17 L30 25 L34 39 L23 30 L12 39 L16 25 L5 17 L19 17 Z" fill="none" stroke="#FBF3E7" stroke-width="3" stroke-linejoin="round" opacity="0.4"/>
       </svg>
       <div class="headline">turn cravings into chaos</div>
-      <div class="button clickable">order now</div>
+      <div class="button clickable magnetic" data-label="tap">order now</div>
     </div>
 
     <footer>
+      <div class="foot-curve" aria-hidden="true"></div>
       <div class="foot-word">urlgrey</div>
       <div class="foot-row">
         <div class="fitem"><span class="dot"></span>dallas, tx</div>
@@ -302,6 +353,10 @@
   </div>
 
 <script>
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finePointer = !(window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches);
+
+  /* ---------- loader ---------- */
   var pctEl = document.getElementById('pct');
   var loader = document.getElementById('loader');
   var n = 0;
@@ -312,36 +367,153 @@
     if (n === 100) setTimeout(function () { loader.classList.add('hide'); }, 250);
   }, 120);
 
+  /* ---------- cursor ---------- */
   var cursor = document.getElementById('cursor');
+  var ring = document.getElementById('cursorRing');
+  var clabel = document.getElementById('clabel');
+  var mx = window.innerWidth / 2, my = window.innerHeight / 2;
+  var cx = mx, cy = my, rx = mx, ry = my;
   document.addEventListener('mousemove', function (e) {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-  });
+    mx = e.clientX; my = e.clientY;
+  }, { passive: true });
+
   document.querySelectorAll('.clickable').forEach(function (el) {
-    el.addEventListener('mouseenter', function () { cursor.style.width = '44px'; cursor.style.height = '44px'; cursor.style.background = '#2B241F'; });
-    el.addEventListener('mouseleave', function () { cursor.style.width = '22px'; cursor.style.height = '22px'; cursor.style.background = '#4F66FF'; });
+    el.addEventListener('mouseenter', function () {
+      cursor.classList.add('big');
+      clabel.textContent = el.getAttribute('data-label') || 'yum';
+    });
+    el.addEventListener('mouseleave', function () { cursor.classList.remove('big'); });
   });
 
+  /* ---------- magnetic buttons ---------- */
+  var magnets = document.querySelectorAll('.magnetic');
+  document.addEventListener('mousemove', function (e) {
+    if (!finePointer) return;
+    magnets.forEach(function (m) {
+      var r = m.getBoundingClientRect();
+      var mcx = r.left + r.width / 2, mcy = r.top + r.height / 2;
+      var dx = e.clientX - mcx, dy = e.clientY - mcy;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var radius = 130;
+      if (dist < radius) {
+        m.style.transform = 'translate(' + dx * 0.3 + 'px,' + dy * 0.3 + 'px)';
+      } else {
+        m.style.transform = 'translate(0,0)';
+      }
+    });
+  }, { passive: true });
+
+  /* ---------- 3D card tilt ---------- */
+  document.querySelectorAll('.card').forEach(function (card) {
+    var base = parseFloat(card.getAttribute('data-rot')) || 0;
+    card.addEventListener('mousemove', function (e) {
+      if (!finePointer) return;
+      var r = card.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width - 0.5;
+      var py = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = 'rotate(' + base + 'deg) perspective(700px) rotateY(' + (px * 12) + 'deg) rotateX(' + (-py * 12) + 'deg) translateY(-10px) scale(1.04)';
+      card.style.boxShadow = (8 - px * 6) + 'px ' + (12) + 'px 0 #2B241F';
+    });
+    card.addEventListener('mouseleave', function () {
+      card.style.transform = 'rotate(' + base + 'deg)';
+      card.style.boxShadow = '8px 8px 0 #2B241F';
+    });
+  });
+
+  /* ---------- sprinkle burst on order buttons ---------- */
+  var palette = ['#4F66FF', '#C98B5C', '#F2C879', '#E8B4BC', '#2B241F'];
+  function burst(x, y) {
+    if (reduceMotion) return;
+    for (var i = 0; i < 22; i++) {
+      (function () {
+        var s = document.createElement('div');
+        s.className = 'sprinkle';
+        s.style.background = palette[Math.floor(Math.random() * palette.length)];
+        s.style.left = x + 'px';
+        s.style.top = y + 'px';
+        s.style.borderRadius = Math.random() > 0.5 ? '3px' : '50%';
+        document.body.appendChild(s);
+        var ang = Math.random() * Math.PI * 2;
+        var vel = 4 + Math.random() * 7;
+        var vxp = Math.cos(ang) * vel;
+        var vyp = Math.sin(ang) * vel - 4;
+        var life = 0;
+        var rot = Math.random() * 360;
+        function step() {
+          life += 1;
+          vyp += 0.35;
+          var nx = parseFloat(s.style.left) + vxp;
+          var ny = parseFloat(s.style.top) + vyp;
+          s.style.left = nx + 'px';
+          s.style.top = ny + 'px';
+          rot += 12;
+          s.style.transform = 'rotate(' + rot + 'deg)';
+          s.style.opacity = Math.max(0, 1 - life / 46);
+          if (life < 46) { requestAnimationFrame(step); } else { s.remove(); }
+        }
+        requestAnimationFrame(step);
+      })();
+    }
+  }
+  document.querySelectorAll('.magnetic').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var r = b.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height / 2);
+    });
+  });
+
+  /* ---------- easing helpers ---------- */
   function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
   function easeInCubic(x) { return x * x * x; }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
+  /* ---------- scroll-driven elements ---------- */
   var pinWrap = document.getElementById('pinWrap');
   var slots = document.querySelectorAll('.slot');
   var floaters = document.querySelectorAll('.floater');
   var progressFill = document.getElementById('progressFill');
   var hWrap = document.getElementById('hWrap');
   var hTrack = document.getElementById('hTrack');
-  var ticking = false;
   var bgSections = document.querySelectorAll('[data-bg]');
+  var footWord = document.querySelector('.foot-word');
+  var marqueeTrack = document.getElementById('marqueeTrack');
 
-  function update() {
+  var lastScroll = window.scrollY;
+  var scrollVel = 0;
+  var marqueeOffset = 0;
+  var marqHalf = 0;
+  function measureMarquee() { marqHalf = marqueeTrack.scrollWidth / 2; }
+  measureMarquee();
+  window.addEventListener('resize', measureMarquee);
+
+  var lastT = performance.now();
+
+  function frame(now) {
+    var dt = Math.min(64, now - lastT) / 16.67;
+    lastT = now;
+
     var y = window.scrollY;
     var vh = window.innerHeight;
 
+    /* cursor lerp */
+    cx += (mx - cx) * 0.35;
+    cy += (my - cy) * 0.35;
+    rx += (mx - rx) * 0.15;
+    ry += (my - ry) * 0.15;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+
+    /* scroll velocity */
+    scrollVel = scrollVel * 0.85 + (y - lastScroll) * 0.15;
+    lastScroll = y;
+
+    /* progress bar */
     var docH = document.documentElement.scrollHeight - vh;
     progressFill.style.height = clamp(y / docH, 0, 1) * 100 + '%';
 
+    /* pinned word slots */
     var rect = pinWrap.getBoundingClientRect();
     var wrapTop = y + rect.top;
     var scrollDist = pinWrap.offsetHeight - vh;
@@ -365,12 +537,19 @@
       slot.style.transform = 'translate3d(0,' + ty + 'px,0) scale(' + scale + ')';
     });
 
+    /* floaters: scroll parallax + mouse drift */
+    var nmx = (mx / window.innerWidth - 0.5);
+    var nmy = (my / vh - 0.5);
     floaters.forEach(function (f) {
       var speed = parseFloat(f.getAttribute('data-speed'));
       var rot = parseFloat(f.getAttribute('data-rot'));
-      f.style.transform = 'translate3d(0,' + (y * speed * -0.08) + 'px,0) rotate(' + (rot + y * 0.01 * (rot > 0 ? 1 : -1)) + 'deg)';
+      var mfac = parseFloat(f.getAttribute('data-mouse')) || 0;
+      var mxShift = finePointer ? nmx * mfac * 26 : 0;
+      var myShift = finePointer ? nmy * mfac * 26 : 0;
+      f.style.transform = 'translate3d(' + mxShift + 'px,' + ((y * speed * -0.08) + myShift) + 'px,0) rotate(' + (rot + y * 0.01 * (rot > 0 ? 1 : -1)) + 'deg)';
     });
 
+    /* horizontal card track */
     var hRect = hWrap.getBoundingClientRect();
     var hTop = y + hRect.top;
     var hDist = hWrap.offsetHeight - vh;
@@ -378,6 +557,21 @@
     var maxShift = hTrack.scrollWidth - window.innerWidth + window.innerWidth * 0.12;
     hTrack.style.transform = 'translate3d(' + (-hProg * maxShift) + 'px,0,0)';
 
+    /* marquee: continuous drift, reacts to scroll velocity */
+    if (!reduceMotion && marqHalf > 0) {
+      marqueeOffset += (0.9 + Math.abs(scrollVel) * 0.35) * dt;
+      if (marqueeOffset >= marqHalf) marqueeOffset -= marqHalf;
+      var skew = clamp(scrollVel * 0.25, -8, 8);
+      marqueeTrack.style.transform = 'translateX(' + (-marqueeOffset) + 'px) skewX(' + skew + 'deg)';
+    }
+
+    /* footer word gentle wobble */
+    if (!reduceMotion && footWord) {
+      var wob = Math.sin(now / 900) * 1.4 - 3;
+      footWord.style.transform = 'rotate(' + wob + 'deg)';
+    }
+
+    /* section background */
     var current = '#FBF3E7';
     bgSections.forEach(function (sec) {
       var r = sec.getBoundingClientRect();
@@ -385,14 +579,11 @@
     });
     document.body.style.background = current;
 
-    ticking = false;
+    requestAnimationFrame(frame);
   }
+  requestAnimationFrame(frame);
 
-  window.addEventListener('scroll', function () {
-    if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
-  }, { passive: true });
-  update();
-
+  /* ---------- reveal + draw on scroll ---------- */
   var revealEls = document.querySelectorAll('.reveal, .draw');
   var seen = 0;
   var io = new IntersectionObserver(function (entries) {
