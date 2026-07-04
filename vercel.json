@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "PORT=3000 BASE_PATH=/ pnpm --filter @workspace/urlgrey run build",
+  "buildCommand": "PORT=3000 BASE_PATH=/ pnpm --filter @workspace/urlgrey run build && rm -rf public && cp -r artifacts/urlgrey/dist/public ./public",
   "installCommand": "pnpm install --frozen-lockfile",
-  "outputDirectory": "artifacts/urlgrey/dist/public",
+  "outputDirectory": "public",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
