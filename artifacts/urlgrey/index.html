@@ -74,17 +74,24 @@
 
   .tag.two { font-family: 'Homemade Apple', cursive; color: #C98B5C; font-size: 30px; transform: rotate(2deg); margin: 50px 0 10px; display: inline-block; }
 
-  /* connected "journey" — no boxes: sticker circles linked by a hand-drawn dash, ghost numbers behind */
+  /* playful "journey" — jaunty wobbling sticker circles linked by a hand-drawn dash, number sticker-badges */
   .steps { position: relative; display: flex; align-items: flex-start; justify-content: center; gap: 0; margin: 40px auto 76px; max-width: 860px; }
-  .step { position: relative; flex: 1; text-align: center; padding: 14px 12px 0; background: none; border: none; border-radius: 0; box-shadow: none; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
-  .step:hover { transform: translateY(-6px); }
-  .step::before { content: attr(data-n); position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-family: 'Anton', sans-serif; font-size: 96px; line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--ac); opacity: 0.16; z-index: 0; pointer-events: none; transition: opacity 0.28s ease, transform 0.3s cubic-bezier(.34,1.56,.64,1); }
-  .step:hover::before { opacity: 0.34; transform: translateX(-50%) translateY(-4px) rotate(-4deg); }
-  .step:not(:last-child)::after { content: ''; position: absolute; top: 62px; left: calc(50% + 58px); width: calc(100% - 116px); border-top: 3px dashed #C98B5C; opacity: 0.5; z-index: 0; }
-  .step .circle { position: relative; z-index: 1; border-radius: 50%; width: 100px; height: 100px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 5px 5px 0 #2B241F; transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); }
+  .step { position: relative; flex: 1; text-align: center; padding: 24px 12px 0; background: none; border: none; border-radius: 0; box-shadow: none; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .step:hover { transform: translateY(-8px); }
+  .step::before { content: attr(data-n); position: absolute; top: 8px; left: calc(50% + 26px); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-size: 18px; color: #FBF3E7; background: #2B241F; border-radius: 50%; box-shadow: 3px 3px 0 var(--ac); transform: rotate(8deg); z-index: 3; pointer-events: none; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .step:hover::before { transform: rotate(-12deg) scale(1.15); }
+  .step:not(:last-child)::after { content: ''; position: absolute; top: 76px; left: calc(50% + 62px); width: calc(100% - 124px); border-top: 3px dashed #C98B5C; opacity: 0.6; z-index: 0; }
+  .step .circle { position: relative; z-index: 1; border-radius: 50%; width: 104px; height: 104px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; box-shadow: 6px 6px 0 #2B241F; transform: rotate(var(--tilt, 0deg)); animation: wob 3.2s ease-in-out infinite; animation-delay: var(--wd, 0s); transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); }
+  .steps .step:nth-child(1) .circle { --tilt: -6deg; --wd: -0.2s; }
+  .steps .step:nth-child(2) .circle { --tilt: 5deg; --wd: -1.5s; }
+  .steps .step:nth-child(3) .circle { --tilt: -4deg; --wd: -0.9s; }
+  @keyframes wob { 0%,100% { transform: rotate(var(--tilt, 0deg)) translateY(0); } 50% { transform: rotate(calc(var(--tilt, 0deg) * -1)) translateY(-6px); } }
   .step .circle::after { content: ''; position: absolute; inset: -9px; border: 2.5px dashed #2B241F; border-radius: 50%; opacity: 0.32; transition: transform 0.6s ease, opacity 0.28s ease; }
-  .step:hover .circle { transform: rotate(-8deg) scale(1.09); }
-  .step:hover .circle::after { transform: rotate(140deg); opacity: 0.7; }
+  .step:hover .circle { animation: none; transform: rotate(0deg) scale(1.18); }
+  .step:hover .circle::after { transform: rotate(160deg); opacity: 0.75; }
+  .step .draw { transition: transform 0.4s ease; }
+  .step:hover .draw { animation: iconwig 0.55s ease; }
+  @keyframes iconwig { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-14deg); } 60% { transform: rotate(11deg); } }
   .step .label { position: relative; display: inline-block; font-family: 'Anton', sans-serif; font-size: 20px; text-transform: uppercase; }
   .step .label::after { content: ''; position: absolute; left: 0; right: 0; bottom: -6px; height: 5px; border-radius: 4px; background: var(--ac); transform: scaleX(0); transform-origin: center; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
   .step:hover .label::after { transform: scaleX(1); }
@@ -173,7 +180,6 @@
     html, body, a, .clickable { cursor: auto; }
     #cursor, #cursorRing { display: none; }
     /* no hover on touch — reveal the step flair at rest */
-    .step::before { opacity: 0.28; }
     .step .label::after { transform: scaleX(1); }
     .step .circle::after { opacity: 0.5; }
   }
@@ -183,8 +189,12 @@
     .planet-img { animation: none; }
     .order-cookie { animation: none; }
     .hero-illo { animation: none; }
-    .step:hover, .step:hover .circle, .step:hover .circle::after { transform: none; }
-    .step:hover::before { transform: translateX(-50%); }
+    .step .circle { animation: none; transform: rotate(var(--tilt, 0deg)); }
+    .step:hover { transform: none; }
+    .step:hover .circle { transform: rotate(var(--tilt, 0deg)); }
+    .step:hover .circle::after { transform: none; }
+    .step:hover .draw { animation: none; }
+    .step:hover::before { transform: rotate(8deg); }
   }
   @media (max-width: 640px) {
     .slot.line { font-size: clamp(34px, 10vw, 60px); }
@@ -207,7 +217,7 @@
     main { padding: 0 22px; }
     .steps { flex-direction: column; align-items: center; max-width: 320px; margin: 24px auto 52px; gap: 6px; }
     .step { width: 100%; padding: 8px 0; }
-    .step::before { font-size: 74px; top: -6px; }
+    .step::before { font-size: 15px; width: 34px; height: 34px; top: 2px; left: calc(50% + 24px); }
     .step:not(:last-child)::after { top: auto; bottom: -6px; left: 50%; width: 0; height: 24px; border-top: none; border-left: 3px dashed #C98B5C; transform: translateX(-50%); }
     .order { padding: 10px 20px 70px; }
     .order-grid { gap: 16px; }
