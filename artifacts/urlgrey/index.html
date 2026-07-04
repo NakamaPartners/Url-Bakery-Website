@@ -67,19 +67,21 @@
 
   .tag.two { font-family: 'Homemade Apple', cursive; color: #C98B5C; font-size: 30px; transform: rotate(2deg); margin: 50px 0 10px; display: inline-block; }
 
-  .steps { display: flex; gap: 24px; margin: 30px 0 70px; flex-wrap: wrap; }
-  .step { position: relative; flex: 1; min-width: 180px; text-align: center; background: #FBF3E7; border: 3px solid #2B241F; border-radius: 22px; padding: 34px 18px 30px; box-shadow: 7px 7px 0 #2B241F; transition: transform 0.28s cubic-bezier(.34,1.56,.64,1), box-shadow 0.28s ease, background 0.28s ease; }
-  .step::before { content: attr(data-n); position: absolute; top: 12px; right: 16px; font-family: 'Anton', sans-serif; font-size: 44px; line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--ac); opacity: 0.45; transition: opacity 0.28s ease, transform 0.28s cubic-bezier(.34,1.56,.64,1); pointer-events: none; }
-  .step:hover { transform: translateY(-10px) rotate(-1.5deg) scale(1.02); box-shadow: 12px 15px 0 #2B241F; background: color-mix(in srgb, var(--ac) 12%, #FBF3E7); }
-  .step:hover::before { opacity: 0.95; transform: rotate(10deg) scale(1.12); }
-  .step .circle { position: relative; border-radius: 50%; width: 96px; height: 96px; margin: 0 auto 18px; display: flex; align-items: center; justify-content: center; transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); }
+  /* connected "journey" — no boxes: sticker circles linked by a hand-drawn dash, ghost numbers behind */
+  .steps { position: relative; display: flex; align-items: flex-start; justify-content: center; gap: 0; margin: 40px auto 76px; max-width: 860px; }
+  .step { position: relative; flex: 1; text-align: center; padding: 14px 12px 0; background: none; border: none; border-radius: 0; box-shadow: none; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .step:hover { transform: translateY(-6px); }
+  .step::before { content: attr(data-n); position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-family: 'Anton', sans-serif; font-size: 96px; line-height: 1; color: transparent; -webkit-text-stroke: 2px var(--ac); opacity: 0.16; z-index: 0; pointer-events: none; transition: opacity 0.28s ease, transform 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .step:hover::before { opacity: 0.34; transform: translateX(-50%) translateY(-4px) rotate(-4deg); }
+  .step:not(:last-child)::after { content: ''; position: absolute; top: 62px; left: calc(50% + 58px); width: calc(100% - 116px); border-top: 3px dashed #C98B5C; opacity: 0.5; z-index: 0; }
+  .step .circle { position: relative; z-index: 1; border-radius: 50%; width: 100px; height: 100px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 5px 5px 0 #2B241F; transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); }
   .step .circle::after { content: ''; position: absolute; inset: -9px; border: 2.5px dashed #2B241F; border-radius: 50%; opacity: 0.32; transition: transform 0.6s ease, opacity 0.28s ease; }
-  .step:hover .circle { transform: rotate(12deg) scale(1.08); }
+  .step:hover .circle { transform: rotate(-8deg) scale(1.09); }
   .step:hover .circle::after { transform: rotate(140deg); opacity: 0.7; }
-  .step .label { position: relative; display: inline-block; font-family: 'Anton', sans-serif; font-size: 19px; text-transform: uppercase; }
-  .step .label::after { content: ''; position: absolute; left: 0; right: 0; bottom: -6px; height: 5px; border-radius: 4px; background: var(--ac); transform: scaleX(0); transform-origin: left; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .step .label { position: relative; display: inline-block; font-family: 'Anton', sans-serif; font-size: 20px; text-transform: uppercase; }
+  .step .label::after { content: ''; position: absolute; left: 0; right: 0; bottom: -6px; height: 5px; border-radius: 4px; background: var(--ac); transform: scaleX(0); transform-origin: center; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
   .step:hover .label::after { transform: scaleX(1); }
-  .step .sub { font-size: 13.5px; color: #5A5248; margin-top: 14px; line-height: 1.35; }
+  .step .sub { font-size: 13.5px; color: #5A5248; margin: 12px auto 0; max-width: 190px; line-height: 1.4; }
 
   .order { max-width: 1000px; margin: 0 auto; padding: 20px 28px 90px; text-align: center; position: relative; }
   .order-title { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(40px, 7vw, 82px); line-height: 0.98; margin: 4px 0 14px; }
@@ -163,8 +165,8 @@
   @media (hover: none), (pointer: coarse) {
     html, body, a, .clickable { cursor: auto; }
     #cursor, #cursorRing { display: none; }
-    /* no hover on touch — reveal the step card flair at rest */
-    .step::before { opacity: 0.7; }
+    /* no hover on touch — reveal the step flair at rest */
+    .step::before { opacity: 0.28; }
     .step .label::after { transform: scaleX(1); }
     .step .circle::after { opacity: 0.5; }
   }
@@ -173,7 +175,8 @@
     .reveal { opacity: 1; transform: none; }
     .planet-img { animation: none; }
     .order-cookie { animation: none; }
-    .step:hover, .step:hover .circle, .step:hover .circle::after, .step:hover::before { transform: none; }
+    .step:hover, .step:hover .circle, .step:hover .circle::after { transform: none; }
+    .step:hover::before { transform: translateX(-50%); }
   }
   @media (max-width: 640px) {
     .slot.line { font-size: clamp(34px, 10vw, 60px); }
@@ -190,7 +193,10 @@
     .hero-intro { padding: 40px 6vw 0; }
     .hero-intro .hand { font-size: 24px; }
     main { padding: 0 22px; }
-    .steps { gap: 18px; margin: 24px 0 52px; }
+    .steps { flex-direction: column; align-items: center; max-width: 320px; margin: 24px auto 52px; gap: 6px; }
+    .step { width: 100%; padding: 8px 0; }
+    .step::before { font-size: 74px; top: -6px; }
+    .step:not(:last-child)::after { top: auto; bottom: -6px; left: 50%; width: 0; height: 24px; border-top: none; border-left: 3px dashed #C98B5C; transform: translateX(-50%); }
     .order { padding: 10px 20px 70px; }
     .order-grid { gap: 16px; }
     .ocard { padding: 26px 20px; }
