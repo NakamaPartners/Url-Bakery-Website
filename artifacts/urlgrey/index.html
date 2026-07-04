@@ -33,9 +33,16 @@
   .navlinks .btn { background: #4F66FF; color: #FBF3E7; padding: 13px 26px; border-radius: 28px; font-weight: 500; font-size: 15px; will-change: transform; transition: box-shadow 0.2s ease; }
   .navlinks .btn:hover { box-shadow: 0 8px 22px rgba(79,102,255,0.4); }
 
-  .hero-intro { text-align: center; padding: 60px 6vw 0; }
-  .hero-intro .hand { font-family: 'Homemade Apple', cursive; color: #4F66FF; font-size: 30px; transform: rotate(-3deg); display: inline-block; }
-  .scroll-hint { display: block; margin: 22px auto 0; width: 30px; height: 30px; animation: bob 1.6s ease-in-out infinite; }
+  .hero-intro { text-align: center; padding: 52px 6vw 6px; }
+  .hero-intro .hand { font-family: 'Homemade Apple', cursive; color: #4F66FF; font-size: clamp(22px, 3vw, 30px); transform: rotate(-3deg); display: inline-block; margin-bottom: 12px; }
+  .hero-title { font-family: 'Anton', sans-serif; text-transform: uppercase; font-size: clamp(40px, 8.4vw, 96px); line-height: 0.95; letter-spacing: 0.5px; max-width: 15ch; margin: 4px auto 0; }
+  .hero-title .accent { color: #4F66FF; }
+  .hero-sub { font-size: clamp(15px, 2.1vw, 19px); color: #5A5248; max-width: 520px; margin: 20px auto 0; line-height: 1.55; }
+  .hero-illo { position: relative; display: inline-block; margin: 24px auto 2px; animation: heroBob 5s ease-in-out infinite; will-change: transform; }
+  .hero-cookie { display: block; width: clamp(150px, 24vw, 248px); height: auto; cursor: pointer; filter: drop-shadow(0 18px 30px rgba(43,36,31,0.3)); will-change: transform; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1); }
+  .hero-poke { position: absolute; top: 8px; right: -78px; font-family: 'Homemade Apple', cursive; color: #C98B5C; font-size: 19px; transform: rotate(6deg); pointer-events: none; white-space: nowrap; }
+  @keyframes heroBob { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-12px) rotate(1.5deg); } }
+  .scroll-hint { display: block; margin: 18px auto 0; width: 30px; height: 30px; animation: bob 1.6s ease-in-out infinite; }
   @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
 
   .pin-wrap { position: relative; height: 400vh; }
@@ -175,6 +182,7 @@
     .reveal { opacity: 1; transform: none; }
     .planet-img { animation: none; }
     .order-cookie { animation: none; }
+    .hero-illo { animation: none; }
     .step:hover, .step:hover .circle, .step:hover .circle::after { transform: none; }
     .step:hover::before { transform: translateX(-50%); }
   }
@@ -192,6 +200,10 @@
     /* tighter rhythm on small screens */
     .hero-intro { padding: 40px 6vw 0; }
     .hero-intro .hand { font-size: 24px; }
+    .hero-title { font-size: clamp(34px, 11vw, 58px); }
+    .hero-sub { font-size: 15px; }
+    .hero-cookie { width: clamp(150px, 46vw, 200px); }
+    .hero-poke { position: static; display: block; right: auto; margin: 10px auto 0; transform: rotate(-3deg); }
     main { padding: 0 22px; }
     .steps { flex-direction: column; align-items: center; max-width: 320px; margin: 24px auto 52px; gap: 6px; }
     .step { width: 100%; padding: 8px 0; }
@@ -226,6 +238,12 @@
 
   <div class="hero-intro">
     <span class="hand">meet urlgrey — scroll on</span>
+    <h1 class="hero-title">small-batch cakes<br>for the <span class="accent">chronically online</span></h1>
+    <p class="hero-sub">a pop-up bakery in dallas by christalyn — earl-grey-inspired cakes, cookies &amp; bars, dropped in tiny batches and gone before you can hit refresh.</p>
+    <div class="hero-illo">
+      <img id="hero-cookie" class="hero-cookie clickable" data-label="poke me" alt="a gooey brown butter chocolate chunk cookie topped with flaky salt and edible flowers">
+      <span class="hero-poke">poke me →</span>
+    </div>
     <svg class="scroll-hint" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 3 V19 M5 13 L12 20 L19 13" fill="none" stroke="#4F66FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
@@ -618,6 +636,23 @@
     });
   });
 
+  /* ---------- interactive hero cookie: parallax tilt + sprinkle burst ---------- */
+  var heroCookie = document.getElementById('hero-cookie');
+  if (heroCookie) {
+    if (finePointer && !reduceMotion) {
+      document.addEventListener('mousemove', function (e) {
+        var r = heroCookie.getBoundingClientRect();
+        var dx = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
+        var dy = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
+        heroCookie.style.transform = 'rotate(' + (dx * 20) + 'deg) translate(' + (dx * 16) + 'px,' + (dy * 12) + 'px)';
+      }, { passive: true });
+    }
+    heroCookie.addEventListener('click', function () {
+      var r = heroCookie.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height / 2);
+    });
+  }
+
   /* ---------- outbound links + in-page scroll ---------- */
   document.querySelectorAll('[data-href]').forEach(function (el) {
     el.addEventListener('click', function () {
@@ -883,6 +918,7 @@
   set('img-founder', founder);
   set('img-inquiries', inquiries);
   set('img-cookie', cookie);
+  set('hero-cookie', cookie);
 
   var v = document.getElementById('vid-drop');
   if (v) { v.src = drop; v.load(); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
