@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "PORT=3000 BASE_PATH=/ pnpm --filter @workspace/urlgrey run build",
-  "outputDirectory": "artifacts/urlgrey/dist/public",
+  "buildCommand": "PORT=3000 BASE_PATH=/ pnpm --filter @workspace/urlgrey run build && rm -rf \"$PWD/public\" && cp -r \"$(find \"$PWD\" -type d -path '*dist/public' -not -path '*/node_modules/*' | head -1)\" \"$PWD/public\"",
+  "outputDirectory": "public",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
